@@ -1,0 +1,87 @@
+import React, { useContext, useState } from "react";
+import { TextInput, StyleSheet, TouchableOpacity, View, KeyboardTypeOptions } from "react-native";
+import { ThemeContext } from "@/context/ThemeContext";
+import { MaterialIcons } from "@expo/vector-icons";
+
+type Props = {
+    handleChange: (text: string) => void;
+    handleBlur: () => void;
+    value: string;
+    name: string;
+    type?: "password" | "email" | "number";
+};
+
+export function CustomTextInput({
+    handleChange,
+    handleBlur,
+    name,
+    value,
+    type,
+    ...props
+}: Props) {
+    const { colors } = useContext(ThemeContext);
+    const [isPasswordVisible, setPasswordVisible] = useState(false);
+
+    const isPassword = type === "password";
+    let keyBoardType: KeyboardTypeOptions;
+    switch (type) {
+        case "email": keyBoardType = "email-address"; break;
+        case "number": keyBoardType = "numeric"; break;
+        default: keyBoardType = "default"
+    }
+
+    const togglePasswordVisibility = () => {
+        setPasswordVisible((prev) => !prev);
+    };
+
+    return (
+        <View style={[isPassword ? styles.pwdContainer : "", { width: "100%" }]}>
+            <TextInput
+                style={[
+                    styles.textInput,
+                    { borderColor: colors.black },
+                ]}
+                secureTextEntry={isPassword && !isPasswordVisible}
+                placeholderTextColor={colors.black}
+                autoCapitalize="none"
+                onChangeText={handleChange}
+                onBlur={handleBlur}
+                keyboardType={keyBoardType}
+                value={value}
+                {...props}
+            />
+            {isPassword && (
+                <TouchableOpacity
+                    style={styles.visible}
+                    onPress={togglePasswordVisibility}
+                >
+                    <MaterialIcons
+                        name={isPasswordVisible ? "visibility" : "visibility-off"}
+                        size={20}
+                        color={colors.black}
+                    />
+                </TouchableOpacity>
+            )}
+        </View>
+    );
+}
+
+const styles = StyleSheet.create({
+    textInput: {
+        padding: 15,
+        fontSize: 14,
+        borderWidth: 1,
+        borderColor: "#1A2130",
+        borderRadius: 8,
+        width: '100%'
+    },
+    pwdContainer: {
+        position: "relative",
+    },
+    visible: {
+        position: "absolute",
+        right: 10,
+        top: "50%",
+        transform: [{ translateY: -10 }],
+    },
+});

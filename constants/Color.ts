@@ -1,6 +1,6 @@
 export const Colors = {
     light: {
-        primary: '#EB8317',
+        primary: '#FFFFFF',
         secondary: '#F3C623',
         third: '#10375C',
         grey: '#A6A3AF',
@@ -9,7 +9,7 @@ export const Colors = {
         danger: '#FF4C4C'
     },
     dark: {
-        primary: '#FFB870',
+        primary: '#EEEEEE',
         secondary: '#FFC857',
         third: '#1A2E45',
         grey: '#6C6C77',
