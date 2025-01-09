@@ -5,7 +5,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 
 type Props = {
     handleChange: (text: string) => void;
-    handleBlur: () => void;
+    handleBlur: (e: any) => void;
     value: string;
     name: string;
     type?: "password" | "email" | "number";
