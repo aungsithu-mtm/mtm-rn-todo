@@ -45,10 +45,10 @@ export function CustomDateInput({
                 <TextInput
                     style={[
                         styles.textInput,
-                        { borderColor: colors.black },
+                        { borderColor: colors.primary },
                     ]}
                     placeholder="Select a date"
-                    placeholderTextColor={colors.black}
+                    placeholderTextColor={colors.primary}
                     autoCapitalize="none"
                     onBlur={handleBlur}
                     editable={false}

@@ -29,13 +29,13 @@ const style = StyleSheet.create({
     overflow: 'hidden'
   },
   line: {
-    borderBottomColor: colors.black,
+    borderBottomColor: colors.gray,
     borderBottomWidth: 1,
     marginHorizontal: 10,
     width: '55%'
   },
   dividerTxt: {
-    color: colors.black,
+    color: colors.gray,
     textAlign: 'center',
     marginVertical: 10,
     fontSize: 13

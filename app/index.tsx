@@ -1,11 +1,13 @@
 import React, { useContext } from "react";
-import { Text, View, Image, TouchableOpacity } from "react-native";
+import { Text, View, Image, TouchableOpacity, Dimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { StyleSheet } from "react-native";
 import * as WebBrowser from "expo-web-browser";
 import { useRouter } from "expo-router";
 import { ThemeContext } from "@/context/ThemeContext";
+
+const { width, height } = Dimensions.get("window");
 
 export default function Index() {
   const { colors } = useContext(ThemeContext);
@@ -15,97 +17,84 @@ export default function Index() {
   };
   const navigate = useRouter();
 
+  const { width } = Dimensions.get("window"); // Get device width
+  const insets = useSafeAreaInsets(); // For safe area padding (e.g., status bar)
+
   return (
-    <View style={[styles.container, { paddingTop: top }]}>
-      <Image
-        source={require("../assets/images/background.png")}
-        style={{
-          flex: 1,
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-        }}
-      />
-      <LinearGradient
-        colors={["transparent", "rgba(16, 55, 92, 0.7)", "rgba(16, 55, 92, 1)"]}
-        style={styles.background}
-      />
-      <View style={styles.logo}>
+    <View style={[styles.container, { backgroundColor: colors.primaryBgColor }]}>
+      <View style={styles.background}>
         <Image
-          source={require("../assets/images/todo-logo.png")}
-          style={{ width: 100, height: 120 }}
+          source={require("../assets/images/topBg.png")}
+          style={styles.backgroundImage}
+        />
+        <Image
+          source={require('../assets/images/todo-logo.png')}
+          style={styles.logoImage}
         />
       </View>
-      <View style={styles.wpDescribe}>
-        <Text style={[styles.describe, { fontSize: 22, fontWeight: 500 }]}>
-          Welcome To Our Todo
+      <View style={[styles.wpDescribe]}>
+        <Text style={[styles.describe, { fontSize: 22, fontWeight: 500, color: colors.primaryTextColor }]}>
+          Welcome!
         </Text>
-        <Text style={[styles.describe, { textAlign: "center" }]}>
-          သင်နဲ့အတူ သင့်မိသားစုအောင််မြင်ဖို့ {"\n"} ကျွန်တော်တို့ ၏ App ကိုယုံကြည်လိုက်ပါ
+        <Text style={[styles.describe, { textAlign: "center", color: colors.primaryTextColor }]}>
+          အောင်စည်သူနှင့်အတူ {'\n'}
+          အောင်မြင်သော အနာဂတ်သစ်ဆီသို့ ချီတက်ကြစို့
         </Text>
       </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity
-          style={[styles.btnFill, { backgroundColor: colors.secondary }]}
+          style={[styles.btnFill, { backgroundColor: colors.secondaryBgColor }]}
           onPress={() => navigate.push("/auth/signin")}
         >
-          <Text style={{ textAlign: "center", color: colors.primaryText, fontWeight: 600 }}>Sign In</Text>
+          <Text style={{ textAlign: "center", color: colors.secondaryTextColor, fontWeight: 600 }}>Sign In</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.btnOutline, { borderColor: colors.primary }]}
+          style={[styles.btnOutline, { borderColor: colors.secondaryBgColor }]}
           onPress={() => navigate.push("/auth/signup")}
         >
-          <Text style={{ textAlign: "center", color: colors.primaryText, fontWeight: 600 }}>
+          <Text style={{ textAlign: "center", color: colors.primaryTextColor, fontWeight: 600 }}>
             Sign Up
           </Text>
         </TouchableOpacity>
       </View>
       <View style={styles.footer}>
-        <Text style={styles.footerText}>
-          By signing in, you agree to our
+        <Text style={[styles.footerText, { color: colors.primaryTextColor }]}>
+          By signing in, you agree to our  {'\n'}
           <Text style={styles.link} onPress={openLink}>
             {" "}
             terms and conditions
           </Text>{" "}
-          and{" "}
-          <Text style={styles.link} onPress={openLink}>
-            {" "}
+          and {' '}
+          < Text style={styles.link} onPress={openLink}>
             privacy policy
           </Text>
         </Text>
       </View>
-    </View>
+    </View >
   );
 }
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 24,
+  },
+  backgroundImage: {
+    position: "absolute",
+    left: 0,
+    top: 0,
+    width: width,
+    height: 300,
   },
   background: {
-    flex: 1,
-    position: "absolute",
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
+    position: "relative",
+    height: 300,
   },
-  logo: {
-    position: "absolute",
-    top: 120,
-    left: '42%',
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  logoTtl: {
-    color: "#fff",
-    fontSize: 20,
-    fontWeight: "bold",
-    paddingTop: 10,
+  logoImage: {
+    width: 150,
+    height: 150,
+    position: 'absolute',
+    left: '20%',
+    top: '12%',
+    transform: 'translate(20%, 12%)'
   },
   wpDescribe: {
     justifyContent: "center",
@@ -113,7 +102,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   describe: {
-    color: "#fff",
     fontSize: 14,
     lineHeight: 21,
     paddingTop: 12,
@@ -121,35 +109,34 @@ const styles = StyleSheet.create({
   buttonContainer: {
     justifyContent: "center",
     alignItems: "center",
-    paddingTop: 40,
-    width: "100%",
+    paddingTop: 20,
+    marginHorizontal: 'auto',
+    width: "85%",
   },
   btnFill: {
     paddingVertical: 18,
-    borderRadius: 8,
+    borderRadius: 21,
     marginVertical: 12,
     width: "100%",
   },
   btnOutline: {
     borderWidth: 1,
     paddingVertical: 18,
-    borderRadius: 8,
+    borderRadius: 21,
     width: "100%",
   },
   footer: {
     position: "absolute",
-    bottom: 50,
-    width: "56%",
-    alignItems: "center",
+    bottom: 30,
+    marginHorizontal: 'auto',
+    width: '100%',
   },
   footerText: {
-    color: "#fff",
     fontSize: 12,
     textAlign: "center",
     lineHeight: 18,
   },
   link: {
-    color: "#fff",
     fontSize: 12,
     textAlign: "center",
     textDecorationLine: "underline",

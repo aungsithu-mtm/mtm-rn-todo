@@ -9,6 +9,7 @@ type Props = {
     value: string;
     name: string;
     type?: "password" | "email" | "number";
+    [key: string]: any;
 };
 
 export function CustomTextInput({
@@ -39,10 +40,10 @@ export function CustomTextInput({
             <TextInput
                 style={[
                     styles.textInput,
-                    { borderColor: colors.black },
+                    { borderColor: props.color ? props.color : colors.secondaryBgColor },
                 ]}
                 secureTextEntry={isPassword && !isPasswordVisible}
-                placeholderTextColor={colors.black}
+                placeholderTextColor={props.color ? props.color : colors.primaryTextColor}
                 autoCapitalize="none"
                 onChangeText={handleChange}
                 onBlur={handleBlur}
@@ -58,7 +59,7 @@ export function CustomTextInput({
                     <MaterialIcons
                         name={isPasswordVisible ? "visibility" : "visibility-off"}
                         size={20}
-                        color={colors.black}
+                        color={props.color ? props.color : colors.primaryTextColor}
                     />
                 </TouchableOpacity>
             )}
@@ -72,7 +73,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
         borderWidth: 1,
         borderColor: "#1A2130",
-        borderRadius: 8,
+        borderRadius: 21,
         width: '100%'
     },
     pwdContainer: {

@@ -1,15 +1,17 @@
-import { Text, View } from "react-native";
+import React, { useState } from "react";
+import AuthForm from "./authForms"
+import { ModalType } from "@/enums/common";
+import { AuthType } from "@/types";
 
-export default function Index() {
+const SignUpPage = () => {
+    const [isLoading, setIsLoading] = useState(false)
+    const signInHandler = async (values: Omit<AuthType, 'username'>) => {
+        setIsLoading(false);
+    }
+
     return (
-        <View
-            style={{
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
-            }}
-        >
-            <Text>SignUp SCREEN</Text>
-        </View>
+        <AuthForm mode={ModalType.SignUp} handleForm={data => signInHandler(data)} loading={isLoading} />
     );
-}
+};
+
+export default SignUpPage;

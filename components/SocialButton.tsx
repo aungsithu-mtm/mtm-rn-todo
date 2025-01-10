@@ -24,7 +24,7 @@ type Props = {
     socialType: SocialType
 };
 
-const { colors } = useContext(ThemeContext)
+
 
 export const useWarnUpBrowser = () => {
     useEffect(() => {
@@ -38,23 +38,24 @@ export const useWarnUpBrowser = () => {
 WebBrowser.maybeCompleteAuthSession();
 
 const SocialBtn: React.FC<Props> = ({ socialType }) => {
+    const { colors } = useContext(ThemeContext)
     useWarnUpBrowser();
     const [isLoading, setIsLoading] = useState(false);
     const [btnText, setBtnText] = useState("");
-    const { user } = useUser();
+    // const { user } = useUser();
     const navigate = useRouter();
 
-    const getStrategy = () => {
-        if (socialType === SocialType.Google) {
-            return "oauth_google";
-        } else if (socialType === SocialType.Facebook) {
-            return "oauth_facebook";
-        }
-    };
+    // const getStrategy = () => {
+    //     if (socialType === SocialType.Google) {
+    //         return "oauth_google";
+    //     } else if (socialType === SocialType.Facebook) {
+    //         return "oauth_facebook";
+    //     }
+    // };
 
-    const { startOAuthFlow } = useOAuth({
-        strategy: getStrategy() as OAuthStrategy
-    })
+    // const { startOAuthFlow } = useOAuth({
+    //     strategy: getStrategy() as OAuthStrategy
+    // })
 
     useEffect(() => {
         if (socialType === SocialType.Google) {
@@ -78,22 +79,22 @@ const SocialBtn: React.FC<Props> = ({ socialType }) => {
     const socialLogin = useCallback(async () => {
         try {
             setIsLoading(true);
-            const { createdSessionId, setActive } = await startOAuthFlow({
-                redirectUrl: Linking.createURL("/dashboard", {
-                    scheme: "myapp"
-                })
-            })
+            // const { createdSessionId, setActive } = await startOAuthFlow({
+            //     redirectUrl: Linking.createURL("/dashboard", {
+            //         scheme: "myapp"
+            //     })
+            // })
 
-            if (createdSessionId) {
-                console.log("Session Created");
-                setActive!({
-                    session: createdSessionId
-                })
-                navigate.replace("/(tabs)/(todo)/pages");
-                await user?.reload();
-            } else {
-                console.log("Session not created");
-            }
+            // if (createdSessionId) {
+            //     console.log("Session Created");
+            //     setActive!({
+            //         session: createdSessionId
+            //     })
+            //     navigate.replace("/(tabs)/(todo)/pages");
+            //     // await user?.reload();
+            // } else {
+            //     console.log("Session not created");
+            // }
         } catch (err) {
             console.log(JSON.stringify(err, null, 2));
         } finally {
@@ -104,12 +105,12 @@ const SocialBtn: React.FC<Props> = ({ socialType }) => {
     return (
         <View>
             <TouchableOpacity
-                style={styles.socialBtn}
+                style={[styles.socialBtn, { shadowColor: colors.primary, backgroundColor: colors.primaryBgColor }]}
                 onPress={socialLogin}
                 disabled={isLoading}
             >
                 <Image source={getImageSource()} style={styles.icon} />
-                <Text style={styles.socialBtnTxt}>{btnText}</Text>
+                <Text style={[styles.socialBtnTxt, { color: colors.primaryTextColor }]}>{btnText}</Text>
             </TouchableOpacity>
         </View>
     )
@@ -119,19 +120,17 @@ export default SocialBtn;
 
 const styles = StyleSheet.create({
     socialBtn: {
-        backgroundColor: "#fff",
-        borderRadius: 10,
+        borderRadius: 21,
         padding: 10,
         marginVertical: 10,
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
-        shadowColor: colors.black,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.2,
         shadowRadius: 2,
         elevation: 5,
-        width: Dimensions.get("screen").width / 2.4,
+        width: Dimensions.get("screen").width / 3,
     },
     icon: {
         width: 20,
@@ -140,7 +139,6 @@ const styles = StyleSheet.create({
         display: "flex",
     },
     socialBtnTxt: {
-        color: colors.black,
         fontWeight: "600",
     },
 });
