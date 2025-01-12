@@ -5,8 +5,8 @@ import {
     StyleSheet,
     ActivityIndicator
 } from 'react-native'
-import React, { useContext } from 'react'
-import { ThemeContext } from "@/context/ThemeContext";
+import React from 'react'
+import { useThemeContext } from "@/context/ThemeContext";
 import { ModalType } from '@/enums/common';
 
 type Props = {
@@ -18,7 +18,7 @@ type Props = {
 }
 
 export default function AuthButton({ mode, handleSubmit, loading, color, type }: Props) {
-    const { colors, theme } = useContext(ThemeContext)
+    const { colors, theme } = useThemeContext();
     let buttonText = 'Click';
 
     switch (mode) {
@@ -32,7 +32,7 @@ export default function AuthButton({ mode, handleSubmit, loading, color, type }:
             buttonText = 'Verify Code';
             break;
         case ModalType.forgotPassword:
-            buttonText = 'Send Code';
+            buttonText = 'Confirm';
             break;
         default: break;
     }

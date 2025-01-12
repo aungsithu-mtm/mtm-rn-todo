@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import { Appearance } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Colors } from "@/constants/Color";
@@ -20,6 +20,7 @@ export const ThemeContext = createContext<ThemeContextType>({
     toggleTheme: () => { },
     setTheme: () => { },
 });
+
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [theme, setTheme] = useState<Theme>({ mode: Appearance.getColorScheme() });
@@ -59,10 +60,29 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         });
         return () => subscription.remove();
     }, []);
-
+    const value = {
+        theme,
+        colors,
+        toggleTheme,
+        setTheme
+    }
     return (
-        <ThemeContext.Provider value={{ theme, colors, toggleTheme, setTheme }}>
+        <ThemeContext.Provider value={value}>
             {children}
         </ThemeContext.Provider>
     );
 };
+
+export const useThemeContext = () => {
+    const context = useContext(ThemeContext);
+    if(!context){
+        throw new Error("useThemeContext must be used within ThemeProvider");
+    }
+    return context;
+}
+
+export default ThemeContext;
+
+
+
+

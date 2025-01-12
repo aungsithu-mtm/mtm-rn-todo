@@ -2,48 +2,58 @@ import {
     View,
     Text,
     TouchableOpacity,
-    ActivityIndicator,
     Platform,
     StyleSheet,
     Dimensions,
     Image
 } from 'react-native';
-import React, { useContext, useState } from 'react'
-import { Link, useRouter } from 'expo-router'
+import React, { useState, useEffect } from 'react'
+import { useRouter } from 'expo-router'
 import { MaterialIcons } from '@expo/vector-icons';
-import { ScrollView, TextInput } from 'react-native-gesture-handler';
-import { Form, Formik } from "formik";
+import { Formik } from "formik";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Toast from "react-native-toast-message";
-import FlashMessage from "react-native-flash-message";
-import { ModalType, SocialType } from '@/enums/common'
-import validationAuthSchema from "./validationSchema"
+import { ModalType } from '@/enums/common'
 import validationCodeSchema from './validationSchema';
 import { AuthType } from "@/types/Auth"
 import { CustomTextInput } from "@/components/form"
-import { ThemeContext } from "@/context/ThemeContext";
+import { useThemeContext } from "@/context/ThemeContext";
+import { useAuthContext } from '@/context/AuthContext';
 import AuthHeader from '../components/AuthHeader';
 import AuthButton from '../components/AuthButton';
 type Props = {
     mode: ModalType;
-    loading?: boolean;
     handleForm: (data: AuthType) => void
 }
 
 const { width, height } = Dimensions.get("window"); // Get device width
 
-const AuthFrom: React.FC<Props> = ({ mode, loading = false, handleForm }) => {
+const EmailVerify: React.FC<Props> = ({ mode, handleForm }) => {
     mode = ModalType.VerifyEmail;
-    const { colors, theme } = useContext(ThemeContext);
+    const { colors } = useThemeContext();
+    const { onVerify, onResendVerificationCode } = useAuthContext();
     const navigate = useRouter();
     const [isloading, setisLoading] = useState(false);
-
+    const [timer, setTimer] = useState<number>(50);
     const { top } = useSafeAreaInsets();
 
-    const handleCode = async (value: string) => {
-        console.log("I handled It")
-    };
-
+    useEffect(() => {
+        if (timer === 0) return;
+        const intervalId = setInterval(() => {
+          setTimer((prevTimer) => prevTimer - 1);
+        }, 1000);
+        return () => clearInterval(intervalId);
+      }, [timer]);
+    
+      const handleCode = async (value: string) => {
+        setisLoading(true);
+        await onVerify!(value).finally(() => setisLoading(false));
+      };
+    
+      const resendCode = () => {
+        setTimer(50);
+        onResendVerificationCode!();
+      };
+    
     return (
         <View style={[style.container, { paddingTop: top, backgroundColor: colors.primaryBgColor }]}>
             <Image
@@ -75,7 +85,7 @@ const AuthFrom: React.FC<Props> = ({ mode, loading = false, handleForm }) => {
                                 <CustomTextInput
                                     color={colors.dark}
                                     type='number'
-                                    placeholder="Code"
+                                    placeholder="Verification Code"
                                     handleChange={handleChange("code")}
                                     handleBlur={handleBlur("code")}
                                     name='code'
@@ -96,12 +106,12 @@ const AuthFrom: React.FC<Props> = ({ mode, loading = false, handleForm }) => {
                             <AuthButton
                                 mode={mode}
                                 handleSubmit={handleSubmit}
-                                loading={loading}
+                                loading={isloading}
                                 type='fill'
                             />
                             <View style={style.resendGroup}>
                                 <Text style={style.textResend}>Don't receive a code? </Text>
-                                {/* {timer > 0 ? (
+                                {timer > 0 ? (
                                     <Text
                                         style={style.textResend}
                                     >{`Resend in ${timer} seconds`}</Text>
@@ -109,7 +119,7 @@ const AuthFrom: React.FC<Props> = ({ mode, loading = false, handleForm }) => {
                                     <TouchableOpacity onPress={resendCode}>
                                         <Text style={style.btnResend}>Resend</Text>
                                     </TouchableOpacity>
-                                )} */}
+                                )}
                             </View>
                         </>
                     )}
@@ -120,7 +130,7 @@ const AuthFrom: React.FC<Props> = ({ mode, loading = false, handleForm }) => {
     )
 }
 
-export default AuthFrom
+export default EmailVerify
 
 const backgroundImageHeight = 550;
 
@@ -144,36 +154,6 @@ const style = StyleSheet.create({
         fontSize: 14,
         color: "#1A2130",
         paddingBottom: 6,
-    },
-    headingContainer: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        paddingBottom: 35,
-    },
-    headerLogo: {
-        width: 100,
-        height: 100
-    },
-    headerTextContainer: {
-        paddingVertical: 10,
-    },
-    headerTitle: {
-        fontSize: 25,
-        fontWeight: 'bold',
-        marginBottom: 10,
-    },
-    headerDescription: {
-        fontSize: 14,
-        fontWeight: '600',
-    },
-    textInput: {
-        padding: 15,
-        fontSize: 14,
-        borderBottomWidth: 1,
-        borderWidth: 1,
-        borderColor: "#1A2130",
-        borderRadius: 8,
     },
     resendGroup: {
         paddingTop: 10,

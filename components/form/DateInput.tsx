@@ -1,11 +1,11 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import {
     TextInput,
     StyleSheet,
     TouchableOpacity,
     View,
 } from "react-native";
-import { ThemeContext } from "@/context/ThemeContext";
+import { useThemeContext } from "@/context/ThemeContext";
 import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";
 
 type Props = {
@@ -22,7 +22,7 @@ export function CustomDateInput({
     value,
     ...props
 }: Props) {
-    const { colors } = useContext(ThemeContext);
+    const { colors } = useThemeContext();
     const [date, setDate] = useState<Date>(value ? new Date(value) : new Date());
     const [show, setShow] = useState(false);
 

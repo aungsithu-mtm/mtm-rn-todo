@@ -1,16 +1,16 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Text, View, Image, TouchableOpacity, Dimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { StyleSheet } from "react-native";
 import * as WebBrowser from "expo-web-browser";
 import { useRouter } from "expo-router";
-import { ThemeContext } from "@/context/ThemeContext";
+import { useThemeContext } from "@/context/ThemeContext";
 
 const { width, height } = Dimensions.get("window");
 
 export default function Index() {
-  const { colors } = useContext(ThemeContext);
+  const { colors } = useThemeContext();
   const { top } = useSafeAreaInsets();
   const openLink = async () => {
     WebBrowser.openBrowserAsync("https://metateammyanmar.com/en/");
@@ -37,7 +37,7 @@ export default function Index() {
           Welcome!
         </Text>
         <Text style={[styles.describe, { textAlign: "center", color: colors.primaryTextColor }]}>
-          အောင်စည်သူနှင့်အတူ {'\n'}
+          MTM နှင့်အတူ {'\n'}
           အောင်မြင်သော အနာဂတ်သစ်ဆီသို့ ချီတက်ကြစို့
         </Text>
       </View>

@@ -1,10 +1,10 @@
-import { useContext, useState } from "react";
-import { Text, View, StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
-import { ThemeContext } from "@/context/ThemeContext";
+import { useState } from "react";
+import { View, StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
+import { useThemeContext } from "@/context/ThemeContext";
 import { CustomTextInput } from "@/components/form"
 
 export default function Index() {
-    const { colors } = useContext(ThemeContext);
+    const { colors } = useThemeContext();
     const [text, onChangeText] = useState("HELLO");
     return (
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>

@@ -1,21 +1,46 @@
-import ShowToast from "@/utils/Toast";
-import { UserInput, UserProviderInput } from "@/domain/graphql/input/UserInput";
-import { useLoginMutation } from "@/domain/graphql/mutation/useLogin";
-import { useRegisterMutation } from "@/domain/graphql/mutation/useRegister";
-import { useResetMutation } from "@/domain/graphql/mutation/useReset";
-import { useUpdateProviderMutation } from "@/domain/graphql/mutation/useUpdateProvider";
+import ShowToast from "@/utils/toast";
+import {
+  UserChangePasswordInput,
+  UserInput,
+  UserProviderInput,
+} from "@/domain/graphql/input/UserInput";
+import { 
+  useLoginMutation,
+  useRegisterMutation,
+  useResetMutation,
+  useUpdateProviderMutation ,
+  useUserDeleteMutation,
+  useProfileUpdateMutation,
+  useChangePasswordMutation,
+} from "@/domain/graphql/mutation/user";
 import { AuthType, ForgetFormValues } from "@/types/auth";
 import { errorHandler } from "@/utils/errorHandler";
 import { deleteAsyncStorage, saveAsyncStorage } from "@/utils/localStorage";
-import { ApolloError, ApolloQueryResult, useApolloClient } from "@apollo/client";
-import { useClerk, useSignIn, useSignUp, useUser } from "@clerk/clerk-expo";
+import {
+  ApolloError,
+  ApolloQueryResult,
+} from "@apollo/client";
+import { 
+  useClerk, 
+  useSignIn, 
+  useSignUp, 
+  useUser 
+} from "@clerk/clerk-expo";
 import { ClerkAPIErrorJSON } from "@clerk/types";
 import { useRouter } from "expo-router";
-import React, { ReactNode, createContext, useContext, useEffect, useState } from "react";
-import { useProfileQuery, UserProfileResponse } from "@/domain/graphql/query/useUserProfile";
+import React, {
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { 
+  useProfileQuery,
+  UserProfileResponse
+} from '@/domain/graphql/query/user'
 import { User } from "@/types/user";
 import apolloClient from "@/apollo/client";
-import { useUserDeleteMutation } from "@/domain/graphql/mutation/useAccountDelete";
 
 type Props = {
   onLogin?: (data: Omit<AuthType, "username">) => Promise<any>;
@@ -26,12 +51,18 @@ type Props = {
   onForgotPassword?: (email: string) => Promise<any>;
   onResetPassword?: (data: ForgetFormValues) => Promise<any>;
   onResendVerificationCode?: () => void;
-  loadingProfile: boolean,
-  errorProfile?: ApolloError,
-  profile?: User,
-  refetchProfile: (variables?: undefined) => Promise<ApolloQueryResult<UserProfileResponse>>,
-  onChangePassword: (currentPassword: string, newPassword: string) => Promise<any>,
-  onDeleteAccount: () => Promise<any>
+  onProfileUpdate: (data: User) => Promise<any>;
+  loadingProfile: boolean;
+  errorProfile?: ApolloError;
+  profile?: User;
+  refetchProfile: (
+    variables?: undefined
+  ) => Promise<ApolloQueryResult<UserProfileResponse>>;
+  onChangePassword: (
+    currentPassword: string,
+    newPassword: string
+  ) => Promise<any>;
+  onDeleteAccount: () => Promise<any>;
 };
 
 const AuthContext = createContext<Props>({} as Props);
@@ -52,16 +83,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [updateProvider] = useUpdateProviderMutation();
   const [reset] = useResetMutation();
   const [deleteAccount] = useUserDeleteMutation();
+  const [updateProfile] = useProfileUpdateMutation();
+  const [changePassword] = useChangePasswordMutation();
   const [registerData, setRegisterData] = useState<UserInput>();
   const { user } = useUser();
-  const [userProfile, { called: calledProfile, loading: loadingProfile, data: dataProfile, error: errorProfile, refetch: refetchProfile }] = useProfileQuery(() => { }, e => console.log(e.message));
+  const [
+    userProfile,
+    {
+      called: calledProfile,
+      loading: loadingProfile,
+      data: dataProfile,
+      error: errorProfile,
+      refetch: refetchProfile,
+    },
+  ] = useProfileQuery(
+    () => {},
+    (e) => console.log(e.message)
+  );
 
   useEffect(() => {
     (async () => {
-      console.log("token", token)
-      await userProfile()
-    })()
-  }, [token])
+      await userProfile();
+    })();
+  }, [token]);
 
   const onLogin = async (data: Omit<AuthType, "username">) => {
     const input = {
@@ -144,10 +188,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const signUpAttempt = await signUp.attemptEmailAddressVerification({
         code,
       });
-
       /* If verification was completed, set the session to active
        * and redirect the user
        */
+      console.log("SignUp Status", signUpAttempt.status , " it's type", typeof signUpAttempt.status)
       if (signUpAttempt.status === "complete") {
         // graphQL for MongoDB
         const result = await register({
@@ -155,10 +199,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             input: registerData!,
           },
         });
-        console.log(result.data);
-
-        await setActiveSignUp({ session: signUpAttempt.createdSessionId });
-        navigation.replace("/(tabs)/home");
+        if (result.data) {
+          console.log("Result.data", result.data)
+          await setActiveSignUp({ session: signUpAttempt.createdSessionId });
+          setTokenAsync(result.data.register.token);
+          navigation.replace("/(tabs)/(todo)/pages");
+        }
+        console.log("EHEE")
       } else {
         console.warn(JSON.stringify(signUpAttempt, null, 2));
       }
@@ -168,27 +215,41 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const onChangePassword = async (newPassword: string, currentPassword: string) => {
+  const onChangePassword = async (
+    currentPassword: string,
+    newPassword: string
+  ) => {
     try {
-      if (!isLoaded) return;
-      await user?.updatePassword({ currentPassword, newPassword });
+      if (!user) return;
+      const input: UserChangePasswordInput = {
+        newPassword,
+        currentPassword,
+      };
+      await user.updatePassword({ currentPassword, newPassword });
+      const response = await changePassword({
+        variables: {
+          input,
+        },
+      });
+      if (response.data) {
+        ShowToast("Success", "Password changed successfully.", "success");
+      }
     } catch (error) {
       const err = error as ClerkAPIErrorJSON;
       ShowToast("Error", err.message, "error");
     }
-  }
+  };
 
   const onResendVerificationCode = async () => {
     if (!isLoadedSignUp) return;
 
     try {
       await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
-
     } catch (error) {
       const err = error as ClerkAPIErrorJSON;
       ShowToast("Error", errorHandler(err), "error");
     }
-  }
+  };
 
   const onForgotPassword = async (email: string) => {
     if (!isLoaded) return;
@@ -203,6 +264,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       return false;
     } catch (err) {
       const error = err as ClerkAPIErrorJSON;
+      ShowToast("Error", errorHandler(error), "error");
+    }
+  };
+
+  const onProfileUpdate = async (data: User) => {
+    try {
+      if (!user) return;
+      const response = await updateProfile({
+        variables: {
+          input: data,
+        },
+      });
+      if (response.data) {
+        // navigation.navigate("/(tabs)/(user)/setting");
+        ShowToast(
+          "Success",
+          response.data.updateUserProfile.message,
+          "success"
+        );
+      }
+    } catch (err) {
+      const error = err as ClerkAPIErrorJSON | ApolloError;
       ShowToast("Error", errorHandler(error), "error");
     }
   };
@@ -242,15 +325,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       await user?.delete();
       const response = await deleteAccount();
       if (response.data) {
-        ShowToast("Success", response.data.deleteUser.message, "success")
+        ShowToast("Success", response.data.deleteUser.message, "success");
       }
       await onLogout();
     } catch (err) {
       const error = err as ClerkAPIErrorJSON | ApolloError;
-      console.log(error)
       ShowToast("Error", errorHandler(error), "error");
     }
-  }
+  };
 
   const setTokenAsync = async (token: string) => {
     await saveAsyncStorage("token", token);
@@ -264,8 +346,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       await deleteAsyncStorage("token");
       await client.resetStore();
       navigation.replace("/");
-    } catch (error) {
-      console.log("error on logout", error);
+    } catch (err) {
+      const error = err as ClerkAPIErrorJSON | ApolloError;
+      ShowToast("Error", errorHandler(error), "error");
     }
   };
 
@@ -278,12 +361,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     onForgotPassword,
     onResetPassword,
     onResendVerificationCode,
+    onProfileUpdate,
+    onChangePassword,
+    onDeleteAccount,
     loadingProfile: loadingProfile && calledProfile,
     errorProfile,
     profile: dataProfile && dataProfile.userProfile,
-    refetchProfile,
-    onChangePassword,
-    onDeleteAccount
+    refetchProfile
   };
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

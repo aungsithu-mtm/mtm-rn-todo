@@ -9,10 +9,9 @@ import {
 import React, {
     useCallback,
     useEffect,
-    useState,
-    useContext
+    useState
 } from 'react'
-import { ThemeContext } from '@/context/ThemeContext'
+import { useThemeContext } from '@/context/ThemeContext'
 import { SocialType } from '@/enums/common'
 import { useOAuth, useUser } from '@clerk/clerk-expo'
 import type { OAuthStrategy } from '@clerk/types'
@@ -23,8 +22,6 @@ import { useRouter } from 'expo-router'
 type Props = {
     socialType: SocialType
 };
-
-
 
 export const useWarnUpBrowser = () => {
     useEffect(() => {
@@ -38,24 +35,24 @@ export const useWarnUpBrowser = () => {
 WebBrowser.maybeCompleteAuthSession();
 
 const SocialBtn: React.FC<Props> = ({ socialType }) => {
-    const { colors } = useContext(ThemeContext)
+    const { colors } = useThemeContext()
     useWarnUpBrowser();
     const [isLoading, setIsLoading] = useState(false);
     const [btnText, setBtnText] = useState("");
-    // const { user } = useUser();
+    const { user } = useUser();
     const navigate = useRouter();
 
-    // const getStrategy = () => {
-    //     if (socialType === SocialType.Google) {
-    //         return "oauth_google";
-    //     } else if (socialType === SocialType.Facebook) {
-    //         return "oauth_facebook";
-    //     }
-    // };
+    const getStrategy = () => {
+        if (socialType === SocialType.Google) {
+            return "oauth_google";
+        } else if (socialType === SocialType.Facebook) {
+            return "oauth_facebook";
+        }
+    };
 
-    // const { startOAuthFlow } = useOAuth({
-    //     strategy: getStrategy() as OAuthStrategy
-    // })
+    const { startOAuthFlow } = useOAuth({
+        strategy: getStrategy() as OAuthStrategy
+    })
 
     useEffect(() => {
         if (socialType === SocialType.Google) {
@@ -79,22 +76,22 @@ const SocialBtn: React.FC<Props> = ({ socialType }) => {
     const socialLogin = useCallback(async () => {
         try {
             setIsLoading(true);
-            // const { createdSessionId, setActive } = await startOAuthFlow({
-            //     redirectUrl: Linking.createURL("/dashboard", {
-            //         scheme: "myapp"
-            //     })
-            // })
+            const { createdSessionId, setActive } = await startOAuthFlow({
+                redirectUrl: Linking.createURL("/dashboard", {
+                    scheme: "myapp"
+                })
+            })
 
-            // if (createdSessionId) {
-            //     console.log("Session Created");
-            //     setActive!({
-            //         session: createdSessionId
-            //     })
-            //     navigate.replace("/(tabs)/(todo)/pages");
-            //     // await user?.reload();
-            // } else {
-            //     console.log("Session not created");
-            // }
+            if (createdSessionId) {
+                console.log("Session Created");
+                setActive!({
+                    session: createdSessionId
+                })
+                navigate.replace("/(tabs)/(todo)/pages");
+                // await user?.reload();
+            } else {
+                console.log("Session not created");
+            }
         } catch (err) {
             console.log(JSON.stringify(err, null, 2));
         } finally {

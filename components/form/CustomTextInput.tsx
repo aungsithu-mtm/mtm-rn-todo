@@ -1,6 +1,6 @@
-import React, { useContext, useState } from "react";
+import React, {  useState } from "react";
 import { TextInput, StyleSheet, TouchableOpacity, View, KeyboardTypeOptions } from "react-native";
-import { ThemeContext } from "@/context/ThemeContext";
+import { useThemeContext } from "@/context/ThemeContext";
 import { MaterialIcons } from "@expo/vector-icons";
 
 type Props = {
@@ -20,7 +20,7 @@ export function CustomTextInput({
     type,
     ...props
 }: Props) {
-    const { colors } = useContext(ThemeContext);
+    const { colors } = useThemeContext();
     const [isPasswordVisible, setPasswordVisible] = useState(false);
 
     const isPassword = type === "password";

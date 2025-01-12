@@ -8,11 +8,11 @@ import {
     Dimensions,
     Image
 } from 'react-native';
-import React, { useContext, useState } from 'react'
+import React, {useState} from 'react'
 import { Link, useRouter } from 'expo-router'
 import { MaterialIcons } from '@expo/vector-icons';
 import { ScrollView, TextInput } from 'react-native-gesture-handler';
-import { Form, Formik } from "formik";
+import { Formik } from "formik";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import FlashMessage from "react-native-flash-message";
@@ -20,7 +20,7 @@ import { ModalType, SocialType } from '@/enums/common'
 import validationAuthSchema from "./validationSchema"
 import { AuthType } from "@/types/Auth"
 import { CustomTextInput } from "@/components/form"
-import { ThemeContext } from "@/context/ThemeContext";
+import { useThemeContext } from "@/context/ThemeContext";
 import SocialBtn from '@/components/SocialButton';
 import Divider from '@/components/Divider';
 import AuthHeader from '../components/AuthHeader';
@@ -34,7 +34,7 @@ type Props = {
 const { width, height } = Dimensions.get("window"); // Get device width
 
 const AuthFrom: React.FC<Props> = ({ mode, loading = false, handleForm }) => {
-    const { colors, theme } = useContext(ThemeContext);
+    const { colors, theme } = useThemeContext();
     const navigate = useRouter();
     const [initialValues] = useState<AuthType>({
         email: "",
@@ -53,6 +53,8 @@ const AuthFrom: React.FC<Props> = ({ mode, loading = false, handleForm }) => {
                     ? (<MaterialIcons name="arrow-back-ios-new" size={24} color="#1A2130" />)
                     : (<MaterialIcons name="arrow-back" size={24} color="#1A2130" />)}
             </TouchableOpacity>
+            <Toast />
+            <FlashMessage position="center" />
             <AuthHeader mode={mode} />
             <ScrollView style={[style.formContainer, { paddingHorizontal: 20 }]}>
                 <View style={style.socialGroup}>
@@ -158,7 +160,7 @@ const AuthFrom: React.FC<Props> = ({ mode, loading = false, handleForm }) => {
                                 </TouchableOpacity>
                                 {mode == ModalType.Signin && (
                                     <View>
-                                        <Link href={"/auth/emailVerify"} replace style={style.fpwdContainer}>
+                                        <Link href={"/auth/forgotPassword"} replace style={style.fpwdContainer}>
                                             <Text style={{ fontSize: 14, color: colors.danger }}>Forgot password?</Text>
                                         </Link>
                                     </View>
@@ -177,7 +179,7 @@ const AuthFrom: React.FC<Props> = ({ mode, loading = false, handleForm }) => {
                             href={mode == ModalType.Signin ? "/auth/signup" : "/auth/signin"}
                             replace
                         >
-                            <Text style={{ color: colors.primaryTextColor, fontSize: 14 }}>
+                            <Text style={{ color: colors.danger, fontSize: 14 }}>
                                 {mode == ModalType.SignUp ? "Sign in" : "Sign up"}
                             </Text>
                         </Link>
@@ -185,7 +187,6 @@ const AuthFrom: React.FC<Props> = ({ mode, loading = false, handleForm }) => {
                 </View>
             </ScrollView>
         </View >
-
     )
 }
 

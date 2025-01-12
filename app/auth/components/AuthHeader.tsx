@@ -1,6 +1,6 @@
 import { View, Text, Image, StyleSheet } from 'react-native'
-import React, { useContext } from 'react'
-import { ThemeContext } from "@/context/ThemeContext";
+import React from 'react'
+import { ThemeContext, useThemeContext } from "@/context/ThemeContext";
 import { ModalType } from '@/enums/common';
 
 type Props = {
@@ -8,7 +8,7 @@ type Props = {
 }
 
 export default function AuthHeader({ mode }: Props) {
-    const { colors, theme } = useContext(ThemeContext)
+    const { colors, theme } = useThemeContext()
     const content = {
         title: "Welcome Back!",
         description: `Please login to continue\nmanaging your plan`

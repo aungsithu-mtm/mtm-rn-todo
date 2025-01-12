@@ -1,12 +1,12 @@
 import { View, Text } from 'react-native'
-import React, { useContext } from 'react'
+import React from 'react'
 import { StyleSheet } from "react-native";
-import { ThemeContext } from "@/context/ThemeContext";
+import { useThemeContext } from "@/context/ThemeContext";
 
 type Props = {
   title: string
 }
-const { colors } = useContext(ThemeContext)
+const { colors } = useThemeContext();
 
 const Divider: React.FC<Props> = ({ title }) => {
   return (
