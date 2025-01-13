@@ -203,7 +203,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           console.log("Result.data", result.data)
           await setActiveSignUp({ session: signUpAttempt.createdSessionId });
           setTokenAsync(result.data.register.token);
-          navigation.replace("/(tabs)/(todo)/pages");
+          navigation.replace("/(drawer)/(tabs)/(todo)/pages");
         }
         console.log("EHEE")
       } else {

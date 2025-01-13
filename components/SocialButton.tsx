@@ -90,7 +90,7 @@ const SocialBtn: React.FC<Props> = ({ socialType }) => {
                     session: createdSessionId
                 })
                 console.log("HELLOOOOO 2");
-                navigate.replace("/(tabs)/(todo)/pages");
+                navigate.replace("/(drawer)/(tabs)/(todo)/pages");
                 await user?.reload();
             } else {
                 console.log("Session not created");

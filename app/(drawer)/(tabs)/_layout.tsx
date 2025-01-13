@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { Tabs } from "expo-router";
-import { MaterialIcons, Ionicons } from "@expo/vector-icons";
-import { TouchableHighlight, StyleSheet } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
+import { StyleSheet } from "react-native";
 import { useThemeContext } from "@/context/ThemeContext";
 import { DrawerToggleButton } from "@react-navigation/drawer";
 
