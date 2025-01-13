@@ -5,9 +5,9 @@ import { AuthType } from "@/types";
 import { useAuthContext } from "@/context/AuthContext";
 
 const SignInPage = () => {
-    const {onLogin} = useAuthContext();
+    const { onLogin } = useAuthContext();
     const [isLoading, setIsLoading] = useState(false)
-    
+
     const signInHandler = async (values: Omit<AuthType, 'username'>) => {
         setIsLoading(true);
         await onLogin!(values).finally(() => setIsLoading(false))

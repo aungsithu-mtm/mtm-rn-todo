@@ -4,11 +4,11 @@ import {
   UserInput,
   UserProviderInput,
 } from "@/domain/graphql/input/UserInput";
-import { 
+import {
   useLoginMutation,
   useRegisterMutation,
   useResetMutation,
-  useUpdateProviderMutation ,
+  useUpdateProviderMutation,
   useUserDeleteMutation,
   useProfileUpdateMutation,
   useChangePasswordMutation,
@@ -20,11 +20,11 @@ import {
   ApolloError,
   ApolloQueryResult,
 } from "@apollo/client";
-import { 
-  useClerk, 
-  useSignIn, 
-  useSignUp, 
-  useUser 
+import {
+  useClerk,
+  useSignIn,
+  useSignUp,
+  useUser
 } from "@clerk/clerk-expo";
 import { ClerkAPIErrorJSON } from "@clerk/types";
 import { useRouter } from "expo-router";
@@ -35,7 +35,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { 
+import {
   useProfileQuery,
   UserProfileResponse
 } from '@/domain/graphql/query/user'
@@ -97,7 +97,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       refetch: refetchProfile,
     },
   ] = useProfileQuery(
-    () => {},
+    () => { },
     (e) => console.log(e.message)
   );
 
@@ -191,7 +191,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       /* If verification was completed, set the session to active
        * and redirect the user
        */
-      console.log("SignUp Status", signUpAttempt.status , " it's type", typeof signUpAttempt.status)
+      console.log("SignUp Status", signUpAttempt.status, " it's type", typeof signUpAttempt.status)
       if (signUpAttempt.status === "complete") {
         // graphQL for MongoDB
         const result = await register({

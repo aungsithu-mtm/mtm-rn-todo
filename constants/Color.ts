@@ -9,7 +9,11 @@ export const Colors = {
         danger: '#EC1D1D',
         gray: '#07393D',
         light: '#A9DADD',
-        dark: '#07393D'
+        dark: '#07393D',
+        tabTextTintColor: '#99A401',
+        tabTextColor: '#215255',
+        barColor: '#A9DADD',
+
     },
     dark: {
         primary: '#07393D',
@@ -22,6 +26,9 @@ export const Colors = {
         gray: '#07393D',
         btnShadow: '#727575',
         light: '#A9DADD',
-        dark: '#07393D'
+        dark: '#07393D',
+        tabTextTintColor: '#c0cc1d',
+        tabTextColor: '#8fc6c9',
+        barColor: '#143d40',
     },
 };

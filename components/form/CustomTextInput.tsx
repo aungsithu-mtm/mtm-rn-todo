@@ -1,4 +1,4 @@
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import { TextInput, StyleSheet, TouchableOpacity, View, KeyboardTypeOptions } from "react-native";
 import { useThemeContext } from "@/context/ThemeContext";
 import { MaterialIcons } from "@expo/vector-icons";

@@ -75,20 +75,23 @@ const SocialBtn: React.FC<Props> = ({ socialType }) => {
 
     const socialLogin = useCallback(async () => {
         try {
+            console.log("HELLLLLLO");
             setIsLoading(true);
+            console.log("HELLOOOOO 1");
             const { createdSessionId, setActive } = await startOAuthFlow({
                 redirectUrl: Linking.createURL("/dashboard", {
-                    scheme: "myapp"
+                    scheme: "todo_frame"
                 })
             })
-
+            console.log("HELLOOOOO 2", createdSessionId, "AND", setActive);
             if (createdSessionId) {
                 console.log("Session Created");
                 setActive!({
                     session: createdSessionId
                 })
+                console.log("HELLOOOOO 2");
                 navigate.replace("/(tabs)/(todo)/pages");
-                // await user?.reload();
+                await user?.reload();
             } else {
                 console.log("Session not created");
             }

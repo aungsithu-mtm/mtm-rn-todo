@@ -1,15 +1,18 @@
 import { Text, View } from "react-native";
+import { useThemeContext } from "@/context/ThemeContext";
 
 export default function Index() {
+    const { colors } = useThemeContext();
     return (
         <View
             style={{
+                backgroundColor: colors.primaryBgColor,
                 flex: 1,
                 justifyContent: "center",
                 alignItems: "center",
             }}
         >
-            <Text>UpComing SCREEN</Text>
+            <Text style={{ color: colors.primaryTextColor }}>UpComing SCREEN</Text>
         </View>
     );
 }

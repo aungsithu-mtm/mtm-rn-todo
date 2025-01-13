@@ -25,7 +25,7 @@ export default function AuthHeader({ mode }: Props) {
             break;
         case ModalType.forgotPassword:
             content.title = "Forgot Password!";
-            content.description = "Don't worry,\nwe will saved you\nplease fill your email";
+            content.description = "Don't worry,\nwe will saved you";
         default: break;
     }
     return (
