@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -12,6 +12,7 @@ import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { router, usePathname } from "expo-router";
 import { useThemeContext } from "@/context/ThemeContext";
+import { useAuthContext } from "@/context/AuthContext";
 
 type CustomHamburgerProps = {
   navigation: any;
@@ -28,12 +29,34 @@ const CustomHamburger: React.FC<CustomHamburgerProps> = ({ navigation, color }) 
   </TouchableOpacity>
 );
 
+type DrawerUser = {
+  username: string,
+  email: string,
+}
+
 const CustomDrawerContent: React.FC<CustomDrawerContentProps> = (props) => {
+  const DefaultUser: DrawerUser = {
+    username: "mgmg",
+    email: "mgmg@gmail.com"
+  }
   const pathname = usePathname();
+  const [data, setData] = useState<DrawerUser>();
+  const { refetchProfile } = useAuthContext();
+  const { colors } = useThemeContext();
 
   useEffect(() => {
-    console.log(pathname);
-  }, [pathname]);
+    (async () => {
+      const data = await refetchProfile();
+      if (data) {
+
+        const { username, email } = data.data.userProfile;
+        const user: DrawerUser = { username, email };
+        setData(user);
+      } else {
+        setData(DefaultUser);
+      }
+    })();
+  }, []);
 
   const renderDrawerItem = (
     iconName: string,
@@ -46,48 +69,54 @@ const CustomDrawerContent: React.FC<CustomDrawerContentProps> = (props) => {
         <IconComponent
           name={iconName}
           size={size}
-          color={pathname === path ? "#fff" : "#000"}
+          color={pathname === path ? colors.primaryTextColor : colors.primaryTextColor}
         />
       )}
       label={label}
       labelStyle={[
         styles.navItemLabel,
-        { color: pathname === path ? "#fff" : "#000" },
+        { color: colors.primaryTextColor },
       ]}
-      style={{ backgroundColor: pathname === path ? "#333" : "#fff" }}
+      style={{ marginVertical: 5 }}
       onPress={() => router.push(path)}
     />
   );
 
   return (
-    <DrawerContentScrollView {...props}>
-      <View style={styles.userInfoWrapper}>
-        <Image
-          source={{ uri: "https://randomuser.me/api/portraits/women/26.jpg" }}
-          style={styles.userImg}
-        />
-        <TouchableWithoutFeedback
-          onPress={() => router.push("/(drawer)/(profile)/pages")}
-        >
-          <View style={styles.userDetailsWrapper}>
-            <Text style={styles.userName}>Aung Si Thu</Text>
-            <Text style={styles.userEmail}>aungsith@gmail.com</Text>
-          </View>
-        </TouchableWithoutFeedback>
-      </View>
-      {renderDrawerItem(
-        "list", 
-        "Todo", 
-        "/(drawer)/(tabs)/(todo)/pages", 
-        MaterialIcons
-        )}
-      {renderDrawerItem(
-        "settings-outline",
-        "Settings",
-        "/(drawer)/(setting)/pages",
-        Ionicons
-      )}
-    </DrawerContentScrollView>
+    <View style={[styles.drawerContainer, { backgroundColor: colors.barColor }]}>
+      <DrawerContentScrollView {...props}>
+        <View style={styles.userInfoWrapper}>
+          <Image
+            source={{ uri: "https://randomuser.me/api/portraits/women/26.jpg" }}
+            style={styles.userImg}
+          />
+          <TouchableWithoutFeedback
+            onPress={() => router.push("/(drawer)/(profile)/pages")}
+          >
+            <View style={styles.userDetailsWrapper}>
+              <Text style={[styles.userName, { color: colors.primaryTextColor }]}>{data?.username}</Text>
+              <Text style={[styles.userEmail, { color: colors.primaryTextColor }]}>{data?.email}</Text>
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
+        {
+          renderDrawerItem(
+            "list",
+            "Todo",
+            "/(drawer)/(tabs)/(todo)/pages",
+            MaterialIcons
+          )
+        }
+        {
+          renderDrawerItem(
+            "settings-outline",
+            "Settings",
+            "/(drawer)/(setting)/pages",
+            Ionicons
+          )
+        }
+      </DrawerContentScrollView >
+    </View >
   );
 };
 
@@ -98,7 +127,7 @@ const Layout: React.FC = () => {
     headerTitle: title,
     headerShown: true,
     headerTitleAlign: "center" as const,
-    headerStyle: { backgroundColor: colors.barColor },
+    headerStyle: { backgroundColor: colors.primaryBgColor },
     headerTitleStyle: {
       fontSize: 18,
       fontWeight: "bold" as const,
@@ -127,6 +156,9 @@ const Layout: React.FC = () => {
 export default Layout;
 
 const styles = StyleSheet.create({
+  drawerContainer: {
+    flex: 1,
+  },
   navItemLabel: {
     marginLeft: 20,
     fontSize: 18,
@@ -153,7 +185,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   userEmail: {
-    fontSize: 16,
+    fontSize: 12,
     fontStyle: "italic",
     textDecorationLine: "underline",
   },

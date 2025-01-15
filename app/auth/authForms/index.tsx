@@ -19,9 +19,9 @@ import FlashMessage from "react-native-flash-message";
 import { ModalType, SocialType } from '@/enums/common'
 import validationAuthSchema from "./validationSchema"
 import { AuthType } from "@/types/Auth"
-import { CustomTextInput } from "@/components/form"
+import { CustomTextInput } from "@/components/Form"
 import { useThemeContext } from "@/context/ThemeContext";
-import SocialBtn from '@/components/SocialButton';
+import { SocialBtn } from '@/components/Button';
 import Divider from '@/components/Divider';
 import AuthHeader from '../components/AuthHeader';
 
@@ -87,20 +87,12 @@ const AuthFrom: React.FC<Props> = ({ mode, loading = false, handleForm }) => {
                                                 placeholder="User name"
                                                 handleChange={handleChange("username")}
                                                 handleBlur={handleBlur("username")}
+                                                errors={errors.username}
+                                                touched={touched.username}
                                                 name='username'
                                                 value={values.username ? values.username : ''}
                                             />
-                                            {errors.username && touched.username && (
-                                                <Text
-                                                    style={{
-                                                        color: colors.danger,
-                                                        fontSize: 12,
-                                                        paddingTop: 5,
-                                                    }}
-                                                >
-                                                    {errors.username}
-                                                </Text>
-                                            )}
+
                                         </View>
                                     )}
                                     <View style={style.inputContainer}>
@@ -109,21 +101,13 @@ const AuthFrom: React.FC<Props> = ({ mode, loading = false, handleForm }) => {
                                             placeholder="email"
                                             handleChange={handleChange("email")}
                                             handleBlur={handleBlur("email")}
+                                            errors={errors.email}
+                                            touched={touched.email}
                                             name='email'
                                             value={values.email ? values.email : ''}
                                             type='email'
                                         />
-                                        {errors.email && touched.email && (
-                                            <Text
-                                                style={{
-                                                    color: colors.danger,
-                                                    fontSize: 12,
-                                                    paddingTop: 5,
-                                                }}
-                                            >
-                                                {errors.email}
-                                            </Text>
-                                        )}
+
                                     </View>
                                     <View>
                                         <CustomTextInput
@@ -131,21 +115,12 @@ const AuthFrom: React.FC<Props> = ({ mode, loading = false, handleForm }) => {
                                             placeholder='password'
                                             handleChange={handleChange("password")}
                                             handleBlur={handleBlur("password")}
+                                            errors={errors.password}
+                                            touched={touched.password}
                                             name='password'
                                             value={values.password ? values.password : ''}
                                             type='password'
                                         />
-                                        {errors.password && touched.password && (
-                                            <Text
-                                                style={{
-                                                    color: colors.danger,
-                                                    fontSize: 12,
-                                                    paddingTop: 5,
-                                                }}
-                                            >
-                                                {errors.password}
-                                            </Text>
-                                        )}
                                     </View>
                                     <TouchableOpacity
                                         style={[style.btnFill, { backgroundColor: colors.dark }]}

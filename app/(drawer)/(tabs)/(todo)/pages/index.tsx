@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { View, StyleSheet, KeyboardAvoidingView, Platform, Text } from "react-native";
 import { useThemeContext } from "@/context/ThemeContext";
-import { CustomTextInput } from "@/components/form"
+import { CustomTextInput } from "@/components/Form"
 
 export default function Index() {
     const { colors } = useThemeContext();

@@ -15,11 +15,11 @@ import { Formik } from "formik";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ModalType } from '@/enums/common'
 import validationForgotSchema from './validationSchema';
-import { ForgetFormValues } from "@/types/auth";
+import { ForgetFormValues } from "@/types";
 import Toast from "react-native-toast-message";
 import FlashMessage from "react-native-flash-message";
 import { AuthType } from "@/types/Auth"
-import { CustomTextInput } from "@/components/form"
+import { CustomTextInput } from "@/components/Form"
 import { useThemeContext } from "@/context/ThemeContext";
 import { useAuthContext } from '@/context/AuthContext';
 import AuthHeader from '../components/AuthHeader';
@@ -106,20 +106,12 @@ const ForgotPassword: React.FC<Props> = ({ mode, handleForm }) => {
                                             placeholder="Email Address"
                                             handleChange={handleChange("email")}
                                             handleBlur={handleBlur("email")}
+                                            errors={errors.email}
+                                            touched={touched.email}
                                             name='email'
                                             value={values.email ? values.email : ''}
                                         />
-                                        {errors.email && touched.email && (
-                                            <Text
-                                                style={{
-                                                    color: colors.danger,
-                                                    fontSize: 12,
-                                                    paddingTop: 5,
-                                                }}
-                                            >
-                                                {errors.code}
-                                            </Text>
-                                        )}
+
                                     </View>
                                 )}
                                 {isSendMail && (
@@ -131,20 +123,11 @@ const ForgotPassword: React.FC<Props> = ({ mode, handleForm }) => {
                                                 placeholder="********"
                                                 handleChange={handleChange("password")}
                                                 handleBlur={handleBlur("password")}
+                                                errors={errors.password}
+                                                touched={touched.password}
                                                 name='password'
                                                 value={values.password ? values.password : ''}
                                             />
-                                            {errors.password && touched.password && (
-                                                <Text
-                                                    style={{
-                                                        color: colors.danger,
-                                                        fontSize: 12,
-                                                        paddingTop: 5,
-                                                    }}
-                                                >
-                                                    {errors.code}
-                                                </Text>
-                                            )}
                                         </View>
                                         <View>
                                             <CustomTextInput
@@ -153,20 +136,12 @@ const ForgotPassword: React.FC<Props> = ({ mode, handleForm }) => {
                                                 placeholder="Verification Code"
                                                 handleChange={handleChange("code")}
                                                 handleBlur={handleBlur("code")}
+                                                errors={errors.code}
+                                                touched={touched.code}
                                                 name='code'
                                                 value={values.code ? values.code : ''}
                                             />
-                                            {errors.code && touched.code && (
-                                                <Text
-                                                    style={{
-                                                        color: colors.danger,
-                                                        fontSize: 12,
-                                                        paddingTop: 5,
-                                                    }}
-                                                >
-                                                    {errors.code}
-                                                </Text>
-                                            )}
+
                                         </View>
                                     </>
                                 )}

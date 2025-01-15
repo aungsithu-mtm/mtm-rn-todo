@@ -34,7 +34,7 @@ export const useWarnUpBrowser = () => {
 
 WebBrowser.maybeCompleteAuthSession();
 
-const SocialBtn: React.FC<Props> = ({ socialType }) => {
+export const SocialBtn: React.FC<Props> = ({ socialType }) => {
     const { colors } = useThemeContext()
     useWarnUpBrowser();
     const [isLoading, setIsLoading] = useState(false);
@@ -65,31 +65,27 @@ const SocialBtn: React.FC<Props> = ({ socialType }) => {
     const getImageSource = () => {
         switch (socialType) {
             case SocialType.Google:
-                return require("../assets/images/google-logo-icon.png");
+                return require("../../assets/images/google-logo-icon.png");
             case SocialType.Facebook:
-                return require("../assets/images/facebook-logo-icon.png");
+                return require("../../assets/images/facebook-logo-icon.png");
             default:
-                return require("../assets/images/google-logo-icon.png");
+                return require("../../assets/images/google-logo-icon.png");
         }
     };
 
     const socialLogin = useCallback(async () => {
         try {
-            console.log("HELLLLLLO");
             setIsLoading(true);
-            console.log("HELLOOOOO 1");
             const { createdSessionId, setActive } = await startOAuthFlow({
                 redirectUrl: Linking.createURL("/dashboard", {
                     scheme: "todo_frame"
                 })
             })
-            console.log("HELLOOOOO 2", createdSessionId, "AND", setActive);
             if (createdSessionId) {
                 console.log("Session Created");
                 setActive!({
                     session: createdSessionId
                 })
-                console.log("HELLOOOOO 2");
                 navigate.replace("/(drawer)/(tabs)/(todo)/pages");
                 await user?.reload();
             } else {
@@ -115,8 +111,6 @@ const SocialBtn: React.FC<Props> = ({ socialType }) => {
         </View>
     )
 }
-
-export default SocialBtn;
 
 const styles = StyleSheet.create({
     socialBtn: {

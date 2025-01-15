@@ -1,15 +1,15 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export const saveAsyncStorage = async(key: string, value: string): Promise<void> => {
-	try {
-		await AsyncStorage.setItem(key, value)
-		console.log("save async strage success: ", key)
-	} catch (e) {
-		console.log(e)
-	}
+export const saveAsyncStorage = async (key: string, value: string): Promise<void> => {
+    try {
+        await AsyncStorage.setItem(key, value)
+        console.log("save async strage success: ", key)
+    } catch (e) {
+        console.log(e)
+    }
 }
 
-export const deleteAsyncStorage = async(key: string): Promise<void> => {
+export const deleteAsyncStorage = async (key: string): Promise<void> => {
     try {
         await AsyncStorage.removeItem(key);
         console.log(`AsyncStorage key: ${key} deleted`);

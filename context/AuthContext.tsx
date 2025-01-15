@@ -13,7 +13,7 @@ import {
   useProfileUpdateMutation,
   useChangePasswordMutation,
 } from "@/domain/graphql/mutation/user";
-import { AuthType, ForgetFormValues } from "@/types/auth";
+import { AuthType, ForgetFormValues } from "@/types";
 import { errorHandler } from "@/utils/errorHandler";
 import { deleteAsyncStorage, saveAsyncStorage } from "@/utils/localStorage";
 import {
@@ -101,6 +101,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     (e) => console.log(e.message)
   );
 
+
   useEffect(() => {
     (async () => {
       await userProfile();
@@ -112,14 +113,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       email: data.email,
       password: data.password,
     };
-    if (!isLoaded) return;
 
+    if (!isLoaded) return;
     try {
       // Clerk signIn
       const result = await signIn.create({
         identifier: data.email,
         password: data.password,
       });
+
 
       if (result.status === "complete") {
         // graphQL for mongoDB
@@ -128,6 +130,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             input,
           },
         });
+
         if (gqlResult.data) {
           setActive({ session: result.createdSessionId });
           setTokenAsync(gqlResult.data.login.token);
@@ -174,7 +177,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           input: data,
         },
       });
-      console.log(result.data);
     } catch (error) {
       const errorMessage = error as ApolloError;
       ShowToast("Error", errorHandler(errorMessage)!, "error");
@@ -191,7 +193,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       /* If verification was completed, set the session to active
        * and redirect the user
        */
-      console.log("SignUp Status", signUpAttempt.status, " it's type", typeof signUpAttempt.status)
       if (signUpAttempt.status === "complete") {
         // graphQL for MongoDB
         const result = await register({
@@ -200,12 +201,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           },
         });
         if (result.data) {
-          console.log("Result.data", result.data)
           await setActiveSignUp({ session: signUpAttempt.createdSessionId });
           setTokenAsync(result.data.register.token);
           navigation.replace("/(drawer)/(tabs)/(todo)/pages");
         }
-        console.log("EHEE")
       } else {
         console.warn(JSON.stringify(signUpAttempt, null, 2));
       }

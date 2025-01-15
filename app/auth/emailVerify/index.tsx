@@ -16,7 +16,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ModalType } from '@/enums/common'
 import validationCodeSchema from './validationSchema';
 import { AuthType } from "@/types/Auth"
-import { CustomTextInput } from "@/components/form"
+import { CustomTextInput } from "@/components/Form"
 import { useThemeContext } from "@/context/ThemeContext";
 import { useAuthContext } from '@/context/AuthContext';
 import Toast from "react-native-toast-message";
@@ -96,20 +96,12 @@ const EmailVerify: React.FC<Props> = ({ mode, handleForm }) => {
                                         placeholder="Verification Code"
                                         handleChange={handleChange("code")}
                                         handleBlur={handleBlur("code")}
+                                        errors={errors.code}
+                                        touched={touched.code}
                                         name='code'
                                         value={values.code ? values.code : ''}
                                     />
-                                    {errors.code && touched.code && (
-                                        <Text
-                                            style={{
-                                                color: colors.danger,
-                                                fontSize: 12,
-                                                paddingTop: 5,
-                                            }}
-                                        >
-                                            {errors.code}
-                                        </Text>
-                                    )}
+
                                 </View>
                                 <AuthButton
                                     mode={mode}

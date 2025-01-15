@@ -24,7 +24,7 @@ const _layout = () => {
         tabBarInactiveTintColor: colors.tabTextColor,
         headerTitleAlign: "center" as const,
         headerStyle: {
-            backgroundColor: colors.barColor,
+            backgroundColor: colors.primaryBgColor,
         },
         headerTitleStyle: {
             fontSize: 18,

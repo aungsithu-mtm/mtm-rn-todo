@@ -4,9 +4,9 @@ import { UserInput } from "../../input/UserInput";
 const RESET_MUTATION = gql`
   mutation Mutation($input: ResetInput!) {
     resetPassword(input: $input) {
-      userId
-      email
-      token
+        userId
+        email
+        token
     }
   }
 `;

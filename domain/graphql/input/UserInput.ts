@@ -16,6 +16,7 @@ export type UserChangePasswordInput = {
   newPassword: string
 }
 
+
 export type UserUpdateInput = {
   _id: string,
   username: string,
@@ -26,3 +27,4 @@ export type UserUpdateInput = {
   phone: string,
   isActive: boolean,
 }
+

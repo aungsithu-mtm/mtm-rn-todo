@@ -1,2 +1,2 @@
 export * from './Divider';
-export * from './SocialButton'
+export * from './Button/SocialButton'

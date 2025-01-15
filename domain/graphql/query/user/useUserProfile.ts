@@ -12,7 +12,6 @@ const USER_PROFILE_QUERY = gql`
     isActive
     lastName
     imageUrl
-    publicId
     phone
     username
   }
@@ -23,9 +22,9 @@ export type UserProfileResponse = {
 }
 
 export const useProfileQuery = (onCompleted?: (result: UserProfileResponse) => void, onError?: (error: ApolloError) => void) => {
-	return useLazyQuery<UserProfileResponse>(USER_PROFILE_QUERY, {
-		onCompleted,
-		onError,
-		errorPolicy: "all",
-	})
+  return useLazyQuery<UserProfileResponse>(USER_PROFILE_QUERY, {
+    onCompleted,
+    onError,
+    errorPolicy: "all",
+  })
 }
