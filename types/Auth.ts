@@ -9,3 +9,7 @@ export type ForgetFormValues = {
     code?: string;
     password?: string;
 };
+
+export type CODE = {
+    code: string
+}

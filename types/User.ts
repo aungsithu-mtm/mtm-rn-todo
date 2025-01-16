@@ -24,6 +24,11 @@ export type AddUserForm = {
     username: string
     email: string
     password: string
+    imageUrl: string
+}
+
+export type Code = {
+    code: string
 }
 
 export type EditUserForm = {

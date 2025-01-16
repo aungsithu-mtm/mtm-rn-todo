@@ -3,7 +3,7 @@ export const Colors = {
         primary: '#A9DADD',
         secondary: '#F3C623',
         primaryBgColor: "#FFFFFF",
-        primaryBgColor2: "#f0ede6",
+        primaryBgColor2: "#c3e4e6",
         secondaryBgColor: "#07393D",
         primaryTextColor: "#07393D",
         secondaryTextColor: "#F1FBFC",
@@ -14,8 +14,6 @@ export const Colors = {
         tabTextTintColor: '#99A401',
         tabTextColor: '#215255',
         barColor: '#A9DADD',
-
-
     },
     dark: {
         primary: '#07393D',

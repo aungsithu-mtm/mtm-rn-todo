@@ -1,6 +1,6 @@
 import gql from "graphql-tag";
 import { useMutation } from "@apollo/client";
-import { ResponseMessage } from "@/types/user";
+import { ResponseMessage } from "@/types";
 
 const ACCOUNT_DELETE_MUTATION = gql`
   mutation Delete {

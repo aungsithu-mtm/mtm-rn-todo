@@ -2,22 +2,24 @@ import {
     View,
     Text,
     ScrollView,
-    StyleSheet,
-    Dimensions
+    Image,
+    TouchableOpacity
 } from "react-native";
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { Formik } from "formik";
 import validationAddUserSchema from "../validation/validationAddUserSchema";
 import { AddUserForm } from "@/types";
-import { useRouter } from "expo-router";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import * as ImagePicker from "expo-image-picker";
 import { CustomTextInput, MICON } from "@/components/Form";
 import { ExecuteButton } from "@/components/Button";
 import { useThemeContext } from "@/context/ThemeContext";
+import { MaterialIcons } from "@expo/vector-icons";
 import styles from "./styles";
+import { UserInput } from "@/domain/graphql/input/UserInput";
 
 type Props = {
     initialValue: AddUserForm;
+    setProfileImage: Dispatch<SetStateAction<string | null>>;
     handleForm: (data: AddUserForm) => void;
     setIsOpen: Dispatch<SetStateAction<boolean>>;
     loading?: boolean,
@@ -25,6 +27,7 @@ type Props = {
 };
 
 const UserCreateForm: React.FC<Props> = ({
+    setProfileImage,
     handleForm,
     initialValue,
     setIsOpen,
@@ -32,15 +35,56 @@ const UserCreateForm: React.FC<Props> = ({
     error
 }) => {
     const { colors } = useThemeContext();
-    const navigate = useRouter();
-    const { top } = useSafeAreaInsets();
     const [image, setImage] = useState<string | null>(null);
+
+    const pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ["images", "videos"],
+            allowsEditing: true,
+            base64: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+
+        if (!result.canceled) {
+            let base64Img = `data:image/jpg;base64,${result.assets[0].base64!}`;
+            setProfileImage(base64Img);
+            setImage(result.assets[0].base64!);
+        }
+    };
 
     return (
         <View style={{ flex: 1 }}>
             <ScrollView>
                 <View>
-                    <Text style={[styles.header, { color: colors.primaryTextColor }]}>Create User</Text>
+                    <Text style={[styles.header, { color: colors.primaryTextColor }]}>
+                        User Create!
+                    </Text>
+                    <View style={styles.profileWrapper}>
+                        {image ? (
+                            <Image
+                                source={{ uri: "data:image/jpeg;base64," + image }}
+                                style={styles.profileImage}
+                            />
+                        ) : initialValue.imageUrl ? (
+                            <Image
+                                source={{ uri: initialValue.imageUrl }}
+                                style={styles.profileImage}
+                            />
+                        ) : (
+                            <Image
+                                source={require("@/assets/images/defaultProfile.png")}
+                                style={styles.profileImage}
+                            />
+                        )}
+                        <TouchableOpacity onPress={pickImage} style={styles.cameraIcon}>
+                            <MaterialIcons
+                                name="camera-alt"
+                                size={30}
+                                color={colors.primaryTextColor}
+                            />
+                        </TouchableOpacity>
+                    </View>
                     <Formik
                         initialValues={initialValue}
                         onSubmit={(values) => handleForm(values)}
@@ -64,7 +108,7 @@ const UserCreateForm: React.FC<Props> = ({
                                         handleBlur={handleBlur("username")}
                                         errors={errors.username}
                                         touched={touched.username}
-                                        value={values.username}
+                                        value={values.username || ""}
                                         name="username"
                                         color={colors.primaryTextColor}
                                         icon={MICON.USERNAME}
@@ -79,7 +123,7 @@ const UserCreateForm: React.FC<Props> = ({
                                         handleBlur={handleBlur("email")}
                                         errors={errors.email}
                                         touched={touched.email}
-                                        value={values.email}
+                                        value={values.email || ""}
                                         name="email"
                                         color={colors.primaryTextColor}
                                         type="email"
@@ -95,7 +139,7 @@ const UserCreateForm: React.FC<Props> = ({
                                         handleBlur={handleBlur("password")}
                                         errors={errors.password}
                                         touched={touched.password}
-                                        value={values.password}
+                                        value={values.password || ""}
                                         name="password"
                                         color={colors.primaryTextColor}
                                         type="password"

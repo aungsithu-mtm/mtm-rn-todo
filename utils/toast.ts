@@ -2,8 +2,9 @@ import Toast from "react-native-toast-message"
 import { Platform } from 'react-native';
 import { showMessage } from "react-native-flash-message";
 
-const ShowToast = (title:string, message:string, type:string) => {
-  if( Platform.OS == "android" ) {
+const ShowToast = (title: string, message: string, type: string) => {
+  console.log("HELLO I M toast")
+  if (Platform.OS == "android") {
     showMessage({
       backgroundColor: "rgba(52, 52, 52, .9)",
       message: message,
