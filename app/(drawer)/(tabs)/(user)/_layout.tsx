@@ -9,6 +9,12 @@ const _layout = () => {
                 name="pages/userDetail"
                 options={{ headerShown: false }}
             />
+            <Stack.Screen
+                name="pages/[id]"
+                options={{
+                    headerShown: false,
+                    animation: 'slide_from_right'
+                }} />
         </Stack>
     )
 }

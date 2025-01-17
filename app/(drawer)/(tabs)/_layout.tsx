@@ -1,13 +1,29 @@
 import React, { useContext } from "react";
-import { Tabs } from "expo-router";
+import { Tabs, useRouter } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
-import { StyleSheet } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, Platform } from "react-native";
+import { useNavigationState } from '@react-navigation/native';
 import { useThemeContext } from "@/context/ThemeContext";
 import { DrawerToggleButton } from "@react-navigation/drawer";
 
 const _layout = () => {
-
     const { colors } = useThemeContext();
+    const navigationState = useNavigationState((state) => state);
+    const navigate = useRouter();
+
+    const getNestedRouteName = (state: any): string | null => {
+        if (!state) return null;
+        const route = state.routes[state.index];
+        if (route.state) {
+            return getNestedRouteName(route.state);
+        }
+        return route.name;
+    };
+
+    const currentRouteName = getNestedRouteName(navigationState);
+    const hideTabBarScreens = ['pages/[id]'];
+    const isSpecificScreens = hideTabBarScreens.includes(currentRouteName ? currentRouteName : '');
+
     const getScreenOptions = (
         icon: keyof typeof MaterialIcons.glyphMap,
         title: string
@@ -19,9 +35,10 @@ const _layout = () => {
                 color={focused ? colors.tabTextTintColor : colors.tabTextColor}
             />
         ),
-        title,
         tabBarActiveTintColor: colors.tabTextTintColor,
         tabBarInactiveTintColor: colors.tabTextColor,
+        title: isSpecificScreens ? 'Detail' : title,
+
         headerTitleAlign: "center" as const,
         headerStyle: {
             backgroundColor: colors.primaryBgColor,
@@ -32,7 +49,13 @@ const _layout = () => {
             color: colors.tabTextColor,
         },
         headerLeft: () => (
-            <DrawerToggleButton tintColor={colors.primaryTextColor} />
+            isSpecificScreens
+                ? <TouchableOpacity onPress={() => navigate.back()} style={{ marginLeft: 20 }}>
+                    {Platform.OS === "ios"
+                        ? (<MaterialIcons name="arrow-back-ios-new" size={24} color="#1A2130" />)
+                        : (<MaterialIcons name="arrow-back" size={24} color="#1A2130" />)}
+                </TouchableOpacity>
+                : <DrawerToggleButton tintColor={colors.primaryTextColor} />
         ),
     });
 
@@ -43,8 +66,10 @@ const _layout = () => {
                 tabBarStyle: {
                     height: 60,
                     backgroundColor: colors.barColor,
-                },
+                    display: isSpecificScreens ? 'none' : 'flex',
+                }
             }}
+
         >
             <Tabs.Screen
                 name="(todo)"

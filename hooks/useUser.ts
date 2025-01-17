@@ -1,6 +1,6 @@
 
 import { useUserCreateMutation } from "@/domain/graphql/mutation/user";
-import { useDeleteUsersMutation } from "@/domain/graphql/mutation/user/useDeleteUser";
+import { useDeleteUsersMutation, useDeleteUserMutation } from "@/domain/graphql/mutation/user/useDeleteUser";
 import { useUserQuery, useUsersQuery } from "@/domain/graphql/query/user"
 import { User, AddUserForm } from "@/types";
 import { errorHandler } from "@/utils/errorHandler";
@@ -37,16 +37,15 @@ const getUser = (id: string) => {
     const [isSuccess, setIsSuccess] = useState<boolean>(false);
 
     try {
-        const { data, error } = useUserQuery({ getUserId: id }, !id);
-
+        const { data, error } = useUserQuery({ _id: id }, !id);
+        console.log("data . getUser", data?.user)
         useEffect(() => {
             if (error) {
                 const err = error as ApolloError;
                 ShowToast("Error", errorHandler(err), "error");
             }
-
             if (data) {
-                setUser(data.getUser);
+                setUser(data.user);
                 setIsSuccess(true);
             }
         }, [error, data]);
@@ -90,16 +89,16 @@ const createUser = () => {
 };
 
 
-const deleteUser = () => {
+const deleteUsers = () => {
     const [userList, setUserList] = useState<string[]>([]);
     const [isSuccess, setIsSuccess] = useState<boolean>(false);
-    const [deleteUserMutation] = useDeleteUsersMutation();
+    const [deleteMutiUserMutation] = useDeleteUsersMutation();
 
     useEffect(() => {
         (async () => {
             try {
                 if (userList.length != 0) {
-                    const result = await deleteUserMutation({
+                    const result = await deleteMutiUserMutation({
                         variables: {
                             input: userList
                         },
@@ -118,6 +117,35 @@ const deleteUser = () => {
     }, [userList]);
 
     return { isSuccess, setUserList };
+};
+
+const deleteUser = () => {
+    const [deleteUserId, setDeleteUserId] = useState<string>();
+    const [isSuccess, setIsSuccess] = useState<boolean>(false);
+    const [deleteUserMutation] = useDeleteUserMutation();
+    useEffect(() => {
+        (async () => {
+            try {
+                if (deleteUserId) {
+                    const result = await deleteUserMutation({
+                        variables: {
+                            input: deleteUserId
+                        },
+                    });
+                    if (result.data?.deleteSingleUser) {
+                        setIsSuccess(true);
+                        setDeleteUserId('');
+                        ShowToast("Success", result.data.deleteSingleUser.message, "success");
+                    }
+                }
+            } catch (error) {
+                const err = error as ApolloError;
+                ShowToast("Error", errorHandler(err), "error");
+            }
+        })();
+    }, [deleteUserId]);
+
+    return { isSuccess, setDeleteUserId };
 };
 
 

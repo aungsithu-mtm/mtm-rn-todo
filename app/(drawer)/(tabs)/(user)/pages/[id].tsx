@@ -3,9 +3,10 @@ import { Text, View, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useThemeContext } from "@/context/ThemeContext";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import FormModal from "@/components/FormModal";
+import { FormModal } from "@/components/Modal";
 import UserEditForm from "../components/UserEditForm";
 import { AddUserForm } from "@/types";
+import { getUser } from "@/hooks/useUser";
 
 const Button = ({ onPress, style, icon, label, labelColor }: any) => (
     <TouchableOpacity onPress={onPress} style={[styles.btn, style]}>
@@ -17,34 +18,37 @@ const Button = ({ onPress, style, icon, label, labelColor }: any) => (
 export default function Index() {
     const { colors } = useThemeContext();
     const [isOpen, setIsOpen] = useState(false);
-    const { userName = "Unknown User", userEmail = "No Email", userImage } = useLocalSearchParams();
+    // const { userName = "Unknown User", userEmail = "No Email", userImage } = useLocalSearchParams();
+    const { id } = useLocalSearchParams();
+    const { user } = getUser(id as string)
+
     const navigate = useRouter();
-
     const initialValue: AddUserForm = {
-        username: "aungthu",
-        email: "aungthu@gmail.com",
+        username: "",
+        email: "",
         password: "",
+        imageUrl: ""
     };
-
     return (
         <View style={[styles.container, { backgroundColor: colors.primaryBgColor }]}>
             <View style={styles.headerContent}>
-                <Image
-                    source={{
-                        uri: userImage,
-                    }}
-                    style={styles.profileImage}
-                />
+                {user?.imageUrl ? (
+                    <Image source={{ uri: user.imageUrl }} style={styles.profileImage}
+                    />
+                ) : (
+                    <Image source={require("@/assets/images/defaultProfile.png")} style={styles.profileImage} />
+                )}
+
                 <View style={styles.headerText}>
                     <Text style={[styles.userName, { color: colors.primaryTextColor }]}>
-                        {userName}
+                        {user?.username}
                     </Text>
                     <Text style={[styles.userEmail, { color: colors.primaryTextColor }]}>
-                        {userEmail}
+                        {user?.email}
                     </Text>
                 </View>
             </View>
-            <View style={styles.btnContainer}>
+            {/* <View style={styles.btnContainer}>
                 <Button
                     onPress={() => setIsOpen(true)}
                     style={{ backgroundColor: colors.primary }}
@@ -67,7 +71,7 @@ export default function Index() {
                         setIsOpen={setIsOpen}
                     />
                 </FormModal>
-            </View>
+            </View> */}
         </View>
     );
 }
@@ -75,7 +79,7 @@ export default function Index() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: "center",
+        padding: 10
     },
     profileImage: {
         width: 125,

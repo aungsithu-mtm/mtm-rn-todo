@@ -39,7 +39,7 @@ import {
   useProfileQuery,
   UserProfileResponse
 } from '@/domain/graphql/query/user'
-import { User } from "@/types/user";
+import { User } from "@/types";
 import apolloClient from "@/apollo/client";
 
 type Props = {

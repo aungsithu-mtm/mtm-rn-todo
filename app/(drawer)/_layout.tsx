@@ -14,6 +14,7 @@ import { router, usePathname } from "expo-router";
 import { useThemeContext } from "@/context/ThemeContext";
 import { useAuthContext } from "@/context/AuthContext";
 
+
 type CustomHamburgerProps = {
   navigation: any;
   color: string;
@@ -148,6 +149,10 @@ const Layout: React.FC = () => {
       <Drawer.Screen
         name="(setting)"
         options={({ navigation }) => screenOptions(navigation, "Setting")}
+      />
+      <Drawer.Screen
+        name="(tabs)/(user)/pages/[id]"
+        options={{ headerShown: false }}
       />
     </Drawer>
   );

@@ -2,11 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native';
 import { useThemeContext } from '@/context/ThemeContext';
 import { AntDesign, MaterialIcons } from '@expo/vector-icons';
-import FormModal from '@/components/FormModal';
+import { FormModal, ConfirmModal } from '@/components/Modal'
 import UserCreateForm from '../components/UserCreateForm';
 import { useRouter } from "expo-router";
 import { AddUserForm, User } from '@/types';
-import UserRepository from '@/repository/user';
 import { createUser, getUsers, deleteUser } from '@/hooks/useUser';
 import { uploadImage } from "@/utils/cloudinary";
 import { useIsFocused } from '@react-navigation/native';
@@ -20,18 +19,18 @@ const MemberList: React.FC = () => {
     }
     const navigate = useRouter();
     const { colors } = useThemeContext();
-    const { onCreate, loading, error } = UserRepository();
-    const [isLoading, setIsLoading] = useState<boolean>(loading);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isOpen, setIsOpen] = useState<boolean>(false)
+    const [isConfirm, setIsComfirm] = useState<boolean>(false);
     const [profileImage, setProfileImage] = useState<string | null>(null);
     const { refetchUser } = getUsers();
     const isFocused = useIsFocused();
     const [members, setMembers] = useState<[User]>();
+    const [selectedMember, setSelectedMember] = useState<User>();
     const { setUser } = createUser();
-    const { setUserList } = deleteUser();
+    const { setDeleteUserId } = deleteUser();
 
     const fetchData = async () => {
-        console.log("HELLO I M REFETCH");
         const data = await refetchUser();
         if (data.data) {
             const members = data.data.users.map((user) => ({
@@ -43,7 +42,7 @@ const MemberList: React.FC = () => {
 
     useEffect(() => {
         fetchData();
-    }, [isFocused, isOpen]);
+    }, [isFocused, isOpen, isConfirm]);
 
     const handleCreate = async (data: AddUserForm) => {
         setIsLoading(true);
@@ -63,19 +62,23 @@ const MemberList: React.FC = () => {
             setIsLoading(false);
         } catch (err) {
             console.error(err);
-            Alert.alert("Error", "Failed to create user. Please try again.");
             setIsLoading(false);
         }
     }
 
-    const handleDelete = async (id: string) => {
-        const checkedNotes = notes
-            .filter((note) => note.checked)
-            .map((note) => note._id);
-        await setNoteList(checkedNotes);
-        setNotes((prevNotes) => prevNotes.filter((note) => !note.checked));
-        setMultipleSelected(false);
-        setOpenModal(false);
+    const handleDelete = async (id: string | undefined) => {
+        try {
+            if (id) {
+                setIsLoading(true);
+                setDeleteUserId(id);
+            }
+            await fetchData();
+            setIsLoading(false)
+            setIsComfirm(false);
+        } catch (err) {
+            console.error(err);
+            setIsLoading(false);
+        }
     };
 
     const handleEdit = (id: string) => {
@@ -84,15 +87,12 @@ const MemberList: React.FC = () => {
 
     const renderItem = ({ item }: { item: User }) => (
         <TouchableOpacity
-            onPress={() => navigate.push({
-                pathname: "/pages/userDetail",
-                params: {
-                    userId: item._id,
-                    userName: item.username,
-                    userEmail: item.email,
-                    userImage: item.imageUrl
-                },
-            })}
+            onPress={() =>
+                navigate.navigate({
+                    pathname: "/pages/[id]",
+                    params: { id: item._id },
+                })
+            }
             style={[styles.card, { backgroundColor: colors.primaryBgColor2 }]}
         >
             {item.imageUrl ? (
@@ -106,11 +106,15 @@ const MemberList: React.FC = () => {
                 <Text style={{ color: colors.primaryTextColor }}>{item.email}</Text>
             </View>
             <View style={styles.actions}>
-                <TouchableOpacity onPress={() => handleDelete(item._id)}>
+                <TouchableOpacity onPress={() => {
+                    setSelectedMember(item);
+                    setIsComfirm(true);
+                }
+                }>
                     <MaterialIcons
                         name='delete'
                         size={20}
-                        color={colors.primaryTextColor}
+                        color={colors.danger}
                     />
                 </TouchableOpacity>
             </View>
@@ -145,8 +149,16 @@ const MemberList: React.FC = () => {
                         size={64}
                         color={colors.secondary}
                     />
-
                 </TouchableOpacity>
+                <ConfirmModal
+                    header='Delete User'
+                    message='Are you sure, you want to delete'
+                    handleForm={() => handleDelete(selectedMember?._id)}
+                    btnLabel='Delete'
+                    isLoading={isLoading}
+                    isOpen={isConfirm}
+                    setIsOpen={setIsComfirm}
+                />
             </View >
         </>
     );

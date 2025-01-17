@@ -3,8 +3,8 @@ import { useQuery } from "@apollo/client";
 import gql from "graphql-tag";
 
 const USER_QUERY = gql`
-query GetNote($getNoteId: ID) {
-  getNote(id: $getNoteId) {
+query User($_id: ID) {
+  user(_id: $_id) {
       _id
     address
     email
@@ -18,14 +18,15 @@ query GetNote($getNoteId: ID) {
 }
 `
 export type UserVariables = {
-    getUserId: string
+    _id: string
 }
 
 export type UserResponse = {
-    getUser: User
+    user: User
 }
 
 export const useUserQuery = (variables: UserVariables, skip: boolean) => {
+    console.log("User Variable", variables)
     return useQuery<UserResponse, UserVariables>(USER_QUERY, {
         variables,
         fetchPolicy: "network-only",
