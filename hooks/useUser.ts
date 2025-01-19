@@ -1,8 +1,10 @@
 
+import { UserUpdateInput } from "@/domain/graphql/input/UserInput";
 import { useUserCreateMutation } from "@/domain/graphql/mutation/user";
+import { useProfileUpdateMutation } from "@/domain/graphql/mutation/user";
 import { useDeleteUsersMutation, useDeleteUserMutation } from "@/domain/graphql/mutation/user/useDeleteUser";
 import { useUserQuery, useUsersQuery } from "@/domain/graphql/query/user"
-import { User, AddUserForm } from "@/types";
+import { User, AddUserForm, EditUserForm } from "@/types";
 import { errorHandler } from "@/utils/errorHandler";
 import ShowToast from "@/utils/toast";
 import { ApolloError } from "@apollo/client";
@@ -149,6 +151,41 @@ const deleteUser = () => {
 };
 
 
+const updateUser = () => {
+    const [user, setUser] = useState<EditUserForm>();
+    const [isSuccess, setIsSuccess] = useState<boolean>(false);
+    const [ userMutation] = useProfileUpdateMutation();
 
+    useEffect(() => {
+        (async () => {
+            try {
+                if (user) {
+                    const result = await userMutation({
+                        variables: {
+                            input: user!,
+                        },
+                    });
+                    if (result.data?.updateUserProfile) {
+                        setIsSuccess(true);
+                        setUser(undefined);
+                        ShowToast("Success", result.data.updateUserProfile.message, "success");
+                    }
+                }
+            } catch (error) {
+                const err = error as ApolloError;
+                ShowToast("Error", errorHandler(err), "error");
+            }
+        })();
+    }, [user]);
+    return {
+        isSuccess, setUser
+    };
+};
 
-export { getUser, getUsers, createUser, deleteUser };
+export { 
+    getUser, 
+    getUsers, 
+    createUser, 
+    deleteUser,
+    updateUser
+ };

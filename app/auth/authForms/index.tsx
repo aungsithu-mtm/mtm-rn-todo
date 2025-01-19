@@ -19,7 +19,7 @@ import FlashMessage from "react-native-flash-message";
 import { ModalType, SocialType } from '@/enums/common'
 import validationAuthSchema from "./validationSchema"
 import { AuthType } from "@/types/Auth"
-import { CustomTextInput } from "@/components/Form"
+import { CustomTextInput } from "@/components/form"
 import { useThemeContext } from "@/context/ThemeContext";
 import { SocialBtn } from '@/components/Button';
 import Divider from '@/components/Divider';

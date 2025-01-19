@@ -52,8 +52,8 @@ const _layout = () => {
             isSpecificScreens
                 ? <TouchableOpacity onPress={() => navigate.back()} style={{ marginLeft: 20 }}>
                     {Platform.OS === "ios"
-                        ? (<MaterialIcons name="arrow-back-ios-new" size={24} color="#1A2130" />)
-                        : (<MaterialIcons name="arrow-back" size={24} color="#1A2130" />)}
+                        ? (<MaterialIcons name="arrow-back-ios-new" size={24} color={colors.primaryTextColor} />)
+                        : (<MaterialIcons name="arrow-back" size={24} color={colors.primaryTextColor} />)}
                 </TouchableOpacity>
                 : <DrawerToggleButton tintColor={colors.primaryTextColor} />
         ),

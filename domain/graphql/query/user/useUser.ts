@@ -12,6 +12,7 @@ query User($_id: ID) {
     isActive
     lastName
     imageUrl
+    publicId
     phone
     username
   }

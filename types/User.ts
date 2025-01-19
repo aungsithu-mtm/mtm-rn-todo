@@ -11,20 +11,12 @@ export type User = {
     imageUrl: string | null
 }
 
-export type UserForm = {
-    firstName?: string
-    lastName?: string
-    username: string
-    email: string
-    address?: string
-    phone: string
-}
-
 export type AddUserForm = {
     username: string
     email: string
     password: string
     imageUrl: string
+    publicId: string
 }
 
 export type Code = {
@@ -32,12 +24,15 @@ export type Code = {
 }
 
 export type EditUserForm = {
+    _id: string
     firstName?: string
     lastName?: string
     username: string
     email: string
     address?: string
     phone?: string
+    imageUrl?: string | null
+    publicId?: string
 }
 
 export type UserChangePassword = {

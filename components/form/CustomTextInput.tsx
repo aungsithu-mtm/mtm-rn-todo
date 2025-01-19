@@ -4,7 +4,7 @@ import { useThemeContext } from "@/context/ThemeContext";
 import { MaterialIcons } from "@expo/vector-icons";
 
 export enum MICON {
-    PASSWORD = "password",
+    PASSWORD = "lock",
     EMAIL = "email",
     USERNAME = "person",
     FIRSTNAME = "person",
@@ -25,6 +25,7 @@ type Props = {
     icon?: MICON
     [key: string]: any;
     label?: string
+    editable? : boolean
 };
 
 export function CustomTextInput({
@@ -37,6 +38,7 @@ export function CustomTextInput({
     type,
     icon,
     label,
+    editable = true,
     ...props
 }: Props) {
     const { colors } = useThemeContext();
@@ -78,6 +80,7 @@ export function CustomTextInput({
                     onBlur={handleBlur}
                     keyboardType={keyBoardType}
                     value={value}
+                    editable={editable}
                     {...props}
                 />
                 {icon && (

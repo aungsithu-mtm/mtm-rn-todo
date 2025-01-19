@@ -1,34 +1,57 @@
 import React, { useState } from "react";
 import { Text, View, Image, TouchableOpacity, StyleSheet } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 import { useThemeContext } from "@/context/ThemeContext";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { FormModal } from "@/components/Modal";
 import UserEditForm from "../components/UserEditForm";
-import { AddUserForm } from "@/types";
-import { getUser } from "@/hooks/useUser";
-
-const Button = ({ onPress, style, icon, label, labelColor }: any) => (
-    <TouchableOpacity onPress={onPress} style={[styles.btn, style]}>
-        {icon}
-        <Text style={[styles.btnLabel, { color: labelColor }]}>{label}</Text>
-    </TouchableOpacity>
-);
+import { uploadImage } from "@/utils/cloudinary";
+import { EditUserForm } from "@/types";
+import { getUser, updateUser } from "@/hooks/useUser";
 
 export default function Index() {
     const { colors } = useThemeContext();
     const [isOpen, setIsOpen] = useState(false);
-    // const { userName = "Unknown User", userEmail = "No Email", userImage } = useLocalSearchParams();
     const { id } = useLocalSearchParams();
     const { user } = getUser(id as string)
+    const { setUser } = updateUser();
+    const [profileImage, setProfileImage] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
-    const navigate = useRouter();
-    const initialValue: AddUserForm = {
-        username: "",
-        email: "",
-        password: "",
-        imageUrl: ""
-    };
+    const initialValue: EditUserForm = {
+            _id: user?._id || '',
+            firstName: user?.firstName,
+            lastName:  user?.lastName,
+            username: user?.username || '',
+            email:  user?.email || '',
+            address: user?.address,
+            phone: user?.phone,
+            imageUrl:  user?.imageUrl,
+            publicId:  user?.publicId ,
+        };
+
+        const handleEdit = async (data: EditUserForm) => {
+            setIsLoading(true);
+            try {
+                if (profileImage) {
+                    await uploadImage(profileImage).then((img) => {
+                        data = {
+                            ...data,
+                            publicId: img.public_id,
+                            imageUrl: img.url,
+                        };
+                    });
+                }
+                setUser(data);
+                setProfileImage(null);
+                setIsOpen(false);
+                setIsLoading(false);
+            } catch (err) {
+                console.error(err);
+                setIsLoading(false);
+            }
+        }
+
     return (
         <View style={[styles.container, { backgroundColor: colors.primaryBgColor }]}>
             <View style={styles.headerContent}>
@@ -48,31 +71,65 @@ export default function Index() {
                     </Text>
                 </View>
             </View>
-            {/* <View style={styles.btnContainer}>
-                <Button
+            <View style={{marginTop: 25}}>
+                {user?.username && (
+                    <View style={styles.infoContainer}>
+                        <MaterialIcons
+                        name="person"
+                        size={20}
+                        color={colors.primaryTextColor}/>
+                        <Text style={[{color: colors.primaryTextColor}, styles.infoText]}>
+                            {user.username}
+                        </Text>
+                    </View>
+                )}
+                {user?.email && (
+                    <View style={styles.infoContainer}>
+                        <MaterialIcons
+                        name="person"
+                        size={20}
+                        color={colors.primaryTextColor}/>
+                        <Text style={[{color: colors.primaryTextColor}, styles.infoText]}>
+                            {user.email}
+                        </Text>
+                    </View>
+                )}
+            </View>
+            <View style={styles.btnContainer}>
+                <TouchableOpacity 
                     onPress={() => setIsOpen(true)}
-                    style={{ backgroundColor: colors.primary }}
-                    icon={
-                        <MaterialIcons name="edit" size={24} color={colors.primaryTextColor} />
-                    }
-                    label="Edit"
-                    labelColor={colors.primaryTextColor}
-                />
-                <Button
-                    onPress={() => navigate.push("../")}
-                    style={{ backgroundColor: colors.primaryBgColor2 }}
-                    label="Back To List"
-                    labelColor={colors.primaryTextColor}
-                />
-                <FormModal isOpen={isOpen} setIsOpen={setIsOpen}>
+                    style={{marginHorizontal: 15}}
+                >
+                    <FontAwesome5 
+                        name="user-edit" 
+                        size={24} 
+                        color={colors.primaryTextColor} 
+                    />
+                </TouchableOpacity>
+                <TouchableOpacity 
+                    onPress={() => setIsOpen(true)}
+                    style={{marginHorizontal: 15}}
+                >
+                  <MaterialIcons 
+                        name="delete" 
+                        size={28} 
+                        color={colors.danger} 
+                  />
+                </TouchableOpacity>
+                </View>
+                {user && (
+                    <FormModal isOpen={isOpen} setIsOpen={setIsOpen}>
                     <UserEditForm
-                        handleForm={(data) => console.log("Data", data)}
+                        handleForm={(data) => handleEdit(data)}
                         initialValue={initialValue}
                         setIsOpen={setIsOpen}
+                        loading={isLoading}
+                        setProfileImage={setProfileImage}
                     />
-                </FormModal>
-            </View> */}
-        </View>
+                    </FormModal>
+                )}
+               
+            </View>
     );
 }
 
@@ -100,10 +157,30 @@ const styles = StyleSheet.create({
     userEmail: {
         fontSize: 14,
     },
-    btnContainer: {
+    infoContainer: {
+        flexDirection:"row",
         width: "80%",
-        alignSelf: "center",
-        marginVertical: 20,
+        marginHorizontal: 'auto',
+        marginTop: 15,
+        // shadowOffset: { width: 0, height: 1 },
+        // shadowOpacity: 0.8,
+        // shadowRadius: 1,  
+        // elevation: 5,
+        boxShadow: '0 4 8 0 rgba(0, 0, 0, 0.2)',
+        padding: 15,
+        borderRadius: 10
+    },
+    infoText: {
+        marginLeft: 20,
+        fontWeight: 'bold'
+    },
+
+    btnContainer: {
+        width: "75%",
+        flexDirection: 'row',
+        justifyContent: 'center',
+        marginHorizontal: 'auto',
+        marginVertical: 50,
     },
     btn: {
         flexDirection: "row",

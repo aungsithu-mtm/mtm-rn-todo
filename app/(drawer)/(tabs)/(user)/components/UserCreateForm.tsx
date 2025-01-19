@@ -10,12 +10,11 @@ import { Formik } from "formik";
 import validationAddUserSchema from "../validation/validationAddUserSchema";
 import { AddUserForm } from "@/types";
 import * as ImagePicker from "expo-image-picker";
-import { CustomTextInput, MICON } from "@/components/Form";
+import { CustomTextInput, MICON } from "@/components/form";
 import { ExecuteButton } from "@/components/Button";
 import { useThemeContext } from "@/context/ThemeContext";
 import { MaterialIcons } from "@expo/vector-icons";
 import styles from "./styles";
-import { UserInput } from "@/domain/graphql/input/UserInput";
 
 type Props = {
     initialValue: AddUserForm;

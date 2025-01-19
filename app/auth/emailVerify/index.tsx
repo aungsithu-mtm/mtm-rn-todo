@@ -16,7 +16,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ModalType } from '@/enums/common'
 import validationCodeSchema from './validationSchema';
 import { AuthType } from "@/types/Auth"
-import { CustomTextInput } from "@/components/Form"
+import { CustomTextInput } from "@/components/form"
 import { useThemeContext } from "@/context/ThemeContext";
 import { useAuthContext } from '@/context/AuthContext';
 import Toast from "react-native-toast-message";

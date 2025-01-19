@@ -26,5 +26,7 @@ export type UserUpdateInput = {
   address: string,
   phone: string,
   isActive: boolean,
+  imageUrl: string,
+  publicId: string
 }
 

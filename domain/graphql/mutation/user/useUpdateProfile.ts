@@ -1,6 +1,6 @@
 import gql from "graphql-tag";
 import { UserUpdateInput } from "@/domain/graphql/input/UserInput";
-import { ResponseMessage } from "@/types";
+import { EditUserForm, ResponseMessage } from "@/types";
 import { useMutation } from "@apollo/client";
 
 const UPDATE_PROFILE_MUTATION = gql`
@@ -15,7 +15,7 @@ const UPDATE_PROFILE_MUTATION = gql`
 `;
 
 export type UpdateProfileVariables = {
-  input: UserUpdateInput;
+  input: EditUserForm;
 };
 
 export type UpdateProfileResponse = {

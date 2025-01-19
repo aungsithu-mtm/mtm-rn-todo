@@ -15,7 +15,8 @@ const MemberList: React.FC = () => {
         username: "",
         email: "",
         password: '',
-        imageUrl: ''
+        imageUrl: '',
+        publicId: '',
     }
     const navigate = useRouter();
     const { colors } = useThemeContext();
@@ -51,6 +52,7 @@ const MemberList: React.FC = () => {
                 await uploadImage(profileImage).then((img) => {
                     data = {
                         ...data,
+                        publicId: img.public_id,
                         imageUrl: img.url,
                     };
                 });

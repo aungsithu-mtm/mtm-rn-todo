@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { View, StyleSheet, KeyboardAvoidingView, Platform, Text } from "react-native";
 import { useThemeContext } from "@/context/ThemeContext";
-import { CustomTextInput } from "@/components/Form"
+
 
 export default function Index() {
     const { colors } = useThemeContext();
@@ -16,15 +16,6 @@ export default function Index() {
                 alignItems: "center",
             }}
         >
-            <CustomTextInput
-                handleChange={onChangeText}
-                handleBlur={() => {
-                    console.log("BLUE")
-                }}
-                value={text}
-                name="Test"
-                color={colors.primaryTextColor}
-            />
         </View>
 
     );

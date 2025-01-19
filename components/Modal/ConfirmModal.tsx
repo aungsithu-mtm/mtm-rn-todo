@@ -36,8 +36,8 @@ export const ConfirmModal: React.FC<Props> = ({
                 animationType="slide"
             >
                 <TouchableOpacity onPress={handleOverlayPress} style={styles.modalContainer}>
-                    <View style={styles.content}>
-                        <Text style={styles.formHeader}>{header}</Text>
+                    <View style={[styles.content, { backgroundColor: colors.primaryBgColor2}]}>
+                        <Text style={[styles.formHeader, { color: colors.primaryTextColor}]}>{header}</Text>
                         <Image
                             source={require("@/assets/images/img-warning.png")}
                             style={styles.warningImg}
@@ -51,7 +51,7 @@ export const ConfirmModal: React.FC<Props> = ({
                                 {isLoading ? (
                                     <ActivityIndicator color={colors.light} />
                                 ) : (
-                                    <Text style={[styles.btnText, { color: colors.primaryBgColor }]}>{btnLabel}</Text>
+                                    <Text style={[styles.btnText, { color: colors.light }]}>{btnLabel}</Text>
                                 )}
                             </TouchableOpacity>
                             <TouchableOpacity
@@ -78,7 +78,6 @@ const styles = StyleSheet.create({
         backgroundColor: "rgba(0,0,0,0.8)",
     },
     content: {
-        backgroundColor: "#FFFFFF",
         padding: 25,
         borderRadius: 25,
         justifyContent: 'center',
@@ -100,6 +99,7 @@ const styles = StyleSheet.create({
         fontWeight: 'semibold',
         lineHeight: 24,
         paddingBottom: 15,
+        textAlign: 'center'
     },
     btnContainer: {
         flexDirection: 'row',
@@ -113,6 +113,7 @@ const styles = StyleSheet.create({
         height: 56,
         borderRadius: 10,
         justifyContent: "center",
+        margin: 10
     },
     btnText: {
         fontWeight: "600",
