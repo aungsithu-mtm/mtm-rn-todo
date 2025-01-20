@@ -1,56 +1,77 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Text, View, Image, TouchableOpacity, StyleSheet } from "react-native";
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 import { useThemeContext } from "@/context/ThemeContext";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { FormModal } from "@/components/Modal";
+import { FormModal, ConfirmModal } from "@/components/Modal";
 import UserEditForm from "../components/UserEditForm";
 import { uploadImage } from "@/utils/cloudinary";
-import { EditUserForm } from "@/types";
-import { getUser, updateUser } from "@/hooks/useUser";
+import { EditUserForm, User } from "@/types";
+import { getUser, updateUser, deleteUser } from "@/hooks/useUser";
 
 export default function Index() {
+    const navigate = useRouter();
     const { colors } = useThemeContext();
     const [isOpen, setIsOpen] = useState(false);
     const { id } = useLocalSearchParams();
-    const { user } = getUser(id as string)
+    const { user, refetch } = getUser(id as string)
+    const { setDeleteUserId } = deleteUser();
     const { setUser } = updateUser();
     const [profileImage, setProfileImage] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isConfirm, setIsComfirm] = useState<boolean>(false);
 
     const initialValue: EditUserForm = {
-            _id: user?._id || '',
-            firstName: user?.firstName,
-            lastName:  user?.lastName,
-            username: user?.username || '',
-            email:  user?.email || '',
-            address: user?.address,
-            phone: user?.phone,
-            imageUrl:  user?.imageUrl,
-            publicId:  user?.publicId ,
-        };
+        _id: user?._id || '',
+        firstName: user?.firstName,
+        lastName: user?.lastName,
+        username: user?.username || '',
+        email: user?.email || '',
+        address: user?.address,
+        phone: user?.phone,
+        imageUrl: user?.imageUrl,
+        publicId: user?.publicId,
+    };
 
-        const handleEdit = async (data: EditUserForm) => {
-            setIsLoading(true);
-            try {
-                if (profileImage) {
-                    await uploadImage(profileImage).then((img) => {
-                        data = {
-                            ...data,
-                            publicId: img.public_id,
-                            imageUrl: img.url,
-                        };
-                    });
-                }
-                setUser(data);
-                setProfileImage(null);
-                setIsOpen(false);
-                setIsLoading(false);
-            } catch (err) {
-                console.error(err);
-                setIsLoading(false);
+    const handleEdit = async (data: EditUserForm) => {
+        setIsLoading(true);
+        try {
+            if (profileImage) {
+                await uploadImage(profileImage).then((img) => {
+                    data = {
+                        ...data,
+                        publicId: img.public_id,
+                        imageUrl: img.url,
+                    };
+                });
             }
+            setUser(data);
+            setProfileImage(null);
+            setIsOpen(false);
+            setIsLoading(false);
+        } catch (err) {
+            console.error(err);
+            setIsLoading(false);
         }
+    }
+
+    const handleDelete = async (id: string | undefined) => {
+        try {
+            if (id) {
+                setIsLoading(true);
+                setDeleteUserId(id)
+            }
+            setIsLoading(false)
+            setIsComfirm(false);
+            navigate.navigate({
+                pathname: "/pages"
+            })
+
+        } catch (err) {
+            console.error(err);
+            setIsLoading(false);
+        }
+    };
 
     return (
         <View style={[styles.container, { backgroundColor: colors.primaryBgColor }]}>
@@ -71,65 +92,90 @@ export default function Index() {
                     </Text>
                 </View>
             </View>
-            <View style={{marginTop: 25}}>
-                {user?.username && (
+            <View style={{ marginTop: 25 }}>
+                {(user?.firstName || user?.lastName) && (
                     <View style={styles.infoContainer}>
                         <MaterialIcons
-                        name="person"
-                        size={20}
-                        color={colors.primaryTextColor}/>
-                        <Text style={[{color: colors.primaryTextColor}, styles.infoText]}>
-                            {user.username}
+                            name="person"
+                            size={20}
+                            color={colors.primaryTextColor} />
+                        <Text style={[{ color: colors.primaryTextColor }, styles.infoText]}>
+                            {user?.firstName ? user.firstName : ""}
+                            {" "}
+                            {user?.lastName ? user.lastName : ""}
                         </Text>
                     </View>
                 )}
-                {user?.email && (
+
+                {user?.address && (
                     <View style={styles.infoContainer}>
                         <MaterialIcons
-                        name="person"
-                        size={20}
-                        color={colors.primaryTextColor}/>
-                        <Text style={[{color: colors.primaryTextColor}, styles.infoText]}>
-                            {user.email}
+                            name="home"
+                            size={20}
+                            color={colors.primaryTextColor} />
+                        <Text style={[{ color: colors.primaryTextColor }, styles.infoText]}>
+                            {user.address}
+                        </Text>
+                    </View>
+                )}
+                {user?.phone && (
+                    <View style={styles.infoContainer}>
+                        <MaterialIcons
+                            name="phone"
+                            size={20}
+                            color={colors.primaryTextColor} />
+                        <Text style={[{ color: colors.primaryTextColor }, styles.infoText]}>
+                            {user.phone}
                         </Text>
                     </View>
                 )}
             </View>
             <View style={styles.btnContainer}>
-                <TouchableOpacity 
+                <TouchableOpacity
                     onPress={() => setIsOpen(true)}
-                    style={{marginHorizontal: 15}}
+                    style={{ marginHorizontal: 15 }}
                 >
-                    <FontAwesome5 
-                        name="user-edit" 
-                        size={24} 
-                        color={colors.primaryTextColor} 
+                    <FontAwesome5
+                        name="user-edit"
+                        size={24}
+                        color={colors.primaryTextColor}
                     />
                 </TouchableOpacity>
-                <TouchableOpacity 
-                    onPress={() => setIsOpen(true)}
-                    style={{marginHorizontal: 15}}
+                <TouchableOpacity
+                    onPress={() => setIsComfirm(true)}
+                    style={{ marginHorizontal: 15 }}
                 >
-                  <MaterialIcons 
-                        name="delete" 
-                        size={28} 
-                        color={colors.danger} 
-                  />
-                </TouchableOpacity>
-                </View>
-                {user && (
-                    <FormModal isOpen={isOpen} setIsOpen={setIsOpen}>
-                    <UserEditForm
-                        handleForm={(data) => handleEdit(data)}
-                        initialValue={initialValue}
-                        setIsOpen={setIsOpen}
-                        loading={isLoading}
-                        setProfileImage={setProfileImage}
+                    <MaterialIcons
+                        name="delete"
+                        size={28}
+                        color={colors.danger}
                     />
-                    </FormModal>
-                )}
-               
+                </TouchableOpacity>
             </View>
+            {
+                user && (
+                    <FormModal isOpen={isOpen} setIsOpen={setIsOpen}>
+                        <UserEditForm
+                            handleForm={(data) => handleEdit(data)}
+                            initialValue={initialValue}
+                            setIsOpen={setIsOpen}
+                            loading={isLoading}
+                            setProfileImage={setProfileImage}
+                        />
+                    </FormModal>
+                )
+            }
+            <ConfirmModal
+                header='Delete User'
+                message='Are you sure, you want to delete'
+                handleForm={() => handleDelete(id as string)}
+                btnLabel='Delete'
+                isLoading={isLoading}
+                isOpen={isConfirm}
+                setIsOpen={setIsComfirm}
+            />
+
+        </View >
     );
 }
 
@@ -158,7 +204,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
     },
     infoContainer: {
-        flexDirection:"row",
+        flexDirection: "row",
         width: "80%",
         marginHorizontal: 'auto',
         marginTop: 15,

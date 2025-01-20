@@ -35,29 +35,24 @@ const getUsers = () => {
 };
 
 const getUser = (id: string) => {
-    const [user, setUser] = useState<User>();
-    const [isSuccess, setIsSuccess] = useState<boolean>(false);
+    const [user, setUser] = useState<User | null>(null);
+    const [isSuccess, setIsSuccess] = useState(false);
 
-    try {
-        const { data, error } = useUserQuery({ _id: id }, !id);
-        console.log("data . getUser", data?.user)
-        useEffect(() => {
-            if (error) {
-                const err = error as ApolloError;
-                ShowToast("Error", errorHandler(err), "error");
-            }
-            if (data) {
-                setUser(data.user);
-                setIsSuccess(true);
-            }
-        }, [error, data]);
-    } catch (error) {
-        const err = error as ApolloError;
-        ShowToast("Error", errorHandler(err), "error");
-    }
-    return { user, isSuccess };
+    const { data, error, refetch } = useUserQuery({ _id: id }, !id);
+
+    useEffect(() => {
+        if (error) {
+            const err = error as ApolloError;
+            ShowToast("Error", errorHandler(err), "error");
+        }
+        if (data) {
+            setUser(data.user);
+            setIsSuccess(true);
+        }
+    }, [data, error]);
+
+    return { user, isSuccess, refetch };
 };
-
 
 const createUser = () => {
     const [user, setUser] = useState<AddUserForm>();
@@ -154,7 +149,7 @@ const deleteUser = () => {
 const updateUser = () => {
     const [user, setUser] = useState<EditUserForm>();
     const [isSuccess, setIsSuccess] = useState<boolean>(false);
-    const [ userMutation] = useProfileUpdateMutation();
+    const [userMutation] = useProfileUpdateMutation();
 
     useEffect(() => {
         (async () => {
@@ -182,10 +177,10 @@ const updateUser = () => {
     };
 };
 
-export { 
-    getUser, 
-    getUsers, 
-    createUser, 
+export {
+    getUser,
+    getUsers,
+    createUser,
     deleteUser,
     updateUser
- };
+};

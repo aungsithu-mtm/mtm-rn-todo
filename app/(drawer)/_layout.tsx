@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Dispatch, SetStateAction } from "react";
 import {
   View,
   Text,
@@ -18,27 +18,39 @@ import { useAuthContext } from "@/context/AuthContext";
 type CustomHamburgerProps = {
   navigation: any;
   color: string;
+  setIsOpen: Dispatch<SetStateAction<boolean>>;
+  isOpen: boolean
 };
 
 type CustomDrawerContentProps = {
   props: any;
+  isOpen: boolean;
 };
-
-const CustomHamburger: React.FC<CustomHamburgerProps> = ({ navigation, color }) => (
-  <TouchableOpacity style={styles.menuButton} onPress={navigation.toggleDrawer}>
-    <Ionicons name="menu" size={24} color={color} />
-  </TouchableOpacity>
-);
 
 type DrawerUser = {
   username: string,
   email: string,
+  imageUrl: string | null
 }
+
+const CustomHamburger: React.FC<CustomHamburgerProps> = ({ navigation, color, setIsOpen, isOpen }) => {
+  const handlePress = () => {
+    setIsOpen(!isOpen);
+    navigation.toggleDrawer();
+  };
+
+  return (
+    <TouchableOpacity style={styles.menuButton} onPress={handlePress}>
+      <Ionicons name="menu" size={24} color={color} />
+    </TouchableOpacity>
+  );
+};
 
 const CustomDrawerContent: React.FC<CustomDrawerContentProps> = (props) => {
   const DefaultUser: DrawerUser = {
     username: "mgmg",
-    email: "mgmg@gmail.com"
+    email: "mgmg@gmail.com",
+    imageUrl: ""
   }
   const pathname = usePathname();
   const [data, setData] = useState<DrawerUser>();
@@ -49,15 +61,17 @@ const CustomDrawerContent: React.FC<CustomDrawerContentProps> = (props) => {
     (async () => {
       const data = await refetchProfile();
       if (data) {
-
-        const { username, email } = data.data.userProfile;
-        const user: DrawerUser = { username, email };
+        const {
+          username,
+          email,
+          imageUrl } = data.data.userProfile;
+        const user: DrawerUser = { username, email, imageUrl };
         setData(user);
       } else {
         setData(DefaultUser);
       }
     })();
-  }, []);
+  }, [props.isOpen]);
 
   const renderDrawerItem = (
     iconName: string,
@@ -87,10 +101,18 @@ const CustomDrawerContent: React.FC<CustomDrawerContentProps> = (props) => {
     <View style={[styles.drawerContainer, { backgroundColor: colors.barColor }]}>
       <DrawerContentScrollView {...props}>
         <View style={styles.userInfoWrapper}>
-          <Image
-            source={{ uri: "https://randomuser.me/api/portraits/women/26.jpg" }}
-            style={styles.userImg}
-          />
+          {data?.imageUrl ? (
+            <Image
+              source={{ uri: data.imageUrl }}
+              style={styles.userImg}
+            />
+          ) : (
+            <Image
+              source={{ uri: "https://randomuser.me/api/portraits/women/26.jpg" }}
+              style={styles.userImg}
+            />
+          )}
+
           <TouchableWithoutFeedback
             onPress={() => router.push("/(drawer)/(profile)/pages")}
           >
@@ -123,7 +145,7 @@ const CustomDrawerContent: React.FC<CustomDrawerContentProps> = (props) => {
 
 const Layout: React.FC = () => {
   const { colors } = useThemeContext();
-
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const screenOptions = (navigation: any, title: string) => ({
     headerTitle: title,
     headerShown: true,
@@ -135,12 +157,17 @@ const Layout: React.FC = () => {
       color: colors.tabTextColor,
     },
     headerLeft: () => (
-      <CustomHamburger color={colors.primaryTextColor} navigation={navigation} />
+      <CustomHamburger
+        color={colors.primaryTextColor}
+        navigation={navigation}
+        setIsOpen={setIsOpen}
+        isOpen={isOpen}
+      />
     ),
   });
 
   return (
-    <Drawer drawerContent={(props: any) => <CustomDrawerContent {...props} />}>
+    <Drawer drawerContent={(props: any) => <CustomDrawerContent isOpen={isOpen} {...props} />}>
       <Drawer.Screen name="(tabs)" options={{ headerShown: false }} />
       <Drawer.Screen
         name="(profile)"
@@ -177,22 +204,20 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   userImg: {
-    width: 80,
-    height: 80,
+    width: 60,
+    height: 60,
     borderRadius: 40,
   },
   userDetailsWrapper: {
-    marginTop: 25,
+    marginTop: 5,
     marginLeft: 10,
   },
   userName: {
-    fontSize: 16,
+    fontSize: 22,
     fontWeight: "bold",
   },
   userEmail: {
     fontSize: 12,
-    fontStyle: "italic",
-    textDecorationLine: "underline",
   },
   menuButton: {
     marginLeft: 15,

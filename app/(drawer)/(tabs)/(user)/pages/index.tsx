@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native';
 import { useThemeContext } from '@/context/ThemeContext';
-import { AntDesign, MaterialIcons } from '@expo/vector-icons';
-import { FormModal, ConfirmModal } from '@/components/Modal'
+import { AntDesign } from '@expo/vector-icons';
+import { FormModal } from '@/components/Modal'
+import { SearchInput } from '@/components/Form'
 import UserCreateForm from '../components/UserCreateForm';
 import { useRouter } from "expo-router";
 import { AddUserForm, User } from '@/types';
-import { createUser, getUsers, deleteUser } from '@/hooks/useUser';
+import { createUser, getUsers } from '@/hooks/useUser';
 import { uploadImage } from "@/utils/cloudinary";
 import { useIsFocused } from '@react-navigation/native';
 
@@ -22,14 +23,13 @@ const MemberList: React.FC = () => {
     const { colors } = useThemeContext();
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isOpen, setIsOpen] = useState<boolean>(false)
-    const [isConfirm, setIsComfirm] = useState<boolean>(false);
+    const [searchInput, setSearchInput] = useState<string>("");
     const [profileImage, setProfileImage] = useState<string | null>(null);
     const { refetchUser } = getUsers();
     const isFocused = useIsFocused();
     const [members, setMembers] = useState<[User]>();
-    const [selectedMember, setSelectedMember] = useState<User>();
+    const [filteredMembers, setFilteredMembers] = useState<User[]>();
     const { setUser } = createUser();
-    const { setDeleteUserId } = deleteUser();
 
     const fetchData = async () => {
         const data = await refetchUser();
@@ -43,7 +43,21 @@ const MemberList: React.FC = () => {
 
     useEffect(() => {
         fetchData();
-    }, [isFocused, isOpen, isConfirm]);
+    }, [isFocused, isOpen]);
+
+    useEffect(() => {
+        if (members) {
+            setFilteredMembers(
+                members.filter(
+                    (user) =>
+                        !searchInput ||
+                        user.username.toLowerCase().includes(searchInput.toLowerCase()) ||
+                        user.email.toLowerCase().includes(searchInput.toLowerCase())
+                )
+            );
+        }
+
+    }, [members, searchInput]);
 
     const handleCreate = async (data: AddUserForm) => {
         setIsLoading(true);
@@ -68,25 +82,6 @@ const MemberList: React.FC = () => {
         }
     }
 
-    const handleDelete = async (id: string | undefined) => {
-        try {
-            if (id) {
-                setIsLoading(true);
-                setDeleteUserId(id);
-            }
-            await fetchData();
-            setIsLoading(false)
-            setIsComfirm(false);
-        } catch (err) {
-            console.error(err);
-            setIsLoading(false);
-        }
-    };
-
-    const handleEdit = (id: string) => {
-        Alert.alert('Edit Member', `Edit member with ID: ${id}`);
-    };
-
     const renderItem = ({ item }: { item: User }) => (
         <TouchableOpacity
             onPress={() =>
@@ -108,17 +103,11 @@ const MemberList: React.FC = () => {
                 <Text style={{ color: colors.primaryTextColor }}>{item.email}</Text>
             </View>
             <View style={styles.actions}>
-                <TouchableOpacity onPress={() => {
-                    setSelectedMember(item);
-                    setIsComfirm(true);
-                }
-                }>
-                    <MaterialIcons
-                        name='delete'
-                        size={20}
-                        color={colors.danger}
-                    />
-                </TouchableOpacity>
+
+                <AntDesign
+                    name="right"
+                    size={18}
+                    color={colors.primaryTextColor} />
             </View>
         </TouchableOpacity>
     );
@@ -126,11 +115,17 @@ const MemberList: React.FC = () => {
     return (
         <>
             <View style={[styles.container, { backgroundColor: colors.primaryBgColor }]}>
+                <SearchInput setSearchInput={setSearchInput} />
                 <FlatList
-                    data={members}
+                    data={searchInput ? filteredMembers : members}
                     keyExtractor={(item) => item._id}
                     renderItem={renderItem}
                     contentContainerStyle={[styles.list]}
+                    ListEmptyComponent={
+                        <Text style={[styles.emptyText, {
+                            color: colors.secondary
+                        }]}>No members available.</Text>
+                    }
                 />
 
                 <FormModal isOpen={isOpen} setIsOpen={setIsOpen}>
@@ -152,15 +147,6 @@ const MemberList: React.FC = () => {
                         color={colors.secondary}
                     />
                 </TouchableOpacity>
-                <ConfirmModal
-                    header='Delete User'
-                    message='Are you sure, you want to delete'
-                    handleForm={() => handleDelete(selectedMember?._id)}
-                    btnLabel='Delete'
-                    isLoading={isLoading}
-                    isOpen={isConfirm}
-                    setIsOpen={setIsComfirm}
-                />
             </View >
         </>
     );
@@ -226,7 +212,12 @@ const styles = StyleSheet.create({
         left: '75%',
         width: 64,
         borderRadius: 100,
-    }
+    },
+    emptyText: {
+        textAlign: "center",
+        fontSize: 16,
+        marginTop: 20,
+    },
 });
 
 export default MemberList;

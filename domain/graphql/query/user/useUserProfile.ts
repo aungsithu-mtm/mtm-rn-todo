@@ -1,4 +1,4 @@
-import { User } from "@/types/user";
+import { User } from '@/types/User'
 import { ApolloError, useLazyQuery } from "@apollo/client";
 import gql from "graphql-tag";
 
@@ -12,6 +12,7 @@ const USER_PROFILE_QUERY = gql`
     isActive
     lastName
     imageUrl
+    publicId
     phone
     username
   }

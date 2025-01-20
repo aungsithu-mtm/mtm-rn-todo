@@ -27,7 +27,6 @@ export type UserResponse = {
 }
 
 export const useUserQuery = (variables: UserVariables, skip: boolean) => {
-    console.log("User Variable", variables)
     return useQuery<UserResponse, UserVariables>(USER_QUERY, {
         variables,
         fetchPolicy: "network-only",

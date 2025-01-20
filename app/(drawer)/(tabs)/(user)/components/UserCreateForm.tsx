@@ -10,7 +10,7 @@ import { Formik } from "formik";
 import validationAddUserSchema from "../validation/validationAddUserSchema";
 import { AddUserForm } from "@/types";
 import * as ImagePicker from "expo-image-picker";
-import { CustomTextInput, MICON } from "@/components/form";
+import { CustomTextInput, MICON } from "@/components/Form";
 import { ExecuteButton } from "@/components/Button";
 import { useThemeContext } from "@/context/ThemeContext";
 import { MaterialIcons } from "@expo/vector-icons";

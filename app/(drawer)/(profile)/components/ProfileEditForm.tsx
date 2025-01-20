@@ -1,35 +1,29 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
-import { 
-    View, 
-    Text, 
-    ScrollView, 
-    KeyboardAvoidingView, 
-    Platform, 
-    Image, 
-    TouchableOpacity 
+import {
+    View,
+    Text,
+    ScrollView,
+    KeyboardAvoidingView,
+    Platform,
 } from "react-native";
 import { Formik } from "formik";
-import validationEditUserSchema from "../validation/validationEditUserSchema";
-import { EditUserForm} from "@/types";
-import * as ImagePicker from "expo-image-picker";
+import validationEditProfileSchema from "../validation/editProfileSchema";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CustomTextInput, MICON } from "@/components/Form";
 import { ExecuteButton } from "@/components/Button";
 import { useThemeContext } from "@/context/ThemeContext";
-import { MaterialIcons } from "@expo/vector-icons";
+import { User } from "@/types";
 import styles from "./styles";
 type Props = {
-    initialValue: EditUserForm;
-    handleForm: (data: EditUserForm) => void;
+    initialValue: User;
+    handleForm: (data: User) => void;
     setIsOpen: Dispatch<SetStateAction<boolean>>;
-    setProfileImage: Dispatch<SetStateAction<string | null>>;
     loading?: boolean,
     error?: any
 };
 
-const UserEditForm: React.FC<Props> = ({
-    setProfileImage,
+const ProfileEditForm: React.FC<Props> = ({
     handleForm,
     initialValue,
     setIsOpen,
@@ -37,25 +31,7 @@ const UserEditForm: React.FC<Props> = ({
     error
 }) => {
     const { colors } = useThemeContext();
-    const navigate = useRouter();
     const { top } = useSafeAreaInsets();
-    const [image, setImage] = useState<string | null>(null);
-
-    const pickImage = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ["images", "videos"],
-            allowsEditing: true,
-            base64: true,
-            aspect: [4, 3],
-            quality: 1,
-        });
-
-        if (!result.canceled) {
-            let base64Img = `data:image/jpg;base64,${result.assets[0].base64!}`;
-            setProfileImage(base64Img);
-            setImage(result.assets[0].base64!);
-        }
-    };
 
     return (
         <KeyboardAvoidingView
@@ -64,37 +40,12 @@ const UserEditForm: React.FC<Props> = ({
         >
             <ScrollView contentContainerStyle={{ paddingTop: top }}>
                 <Text style={[styles.header, { color: colors.primaryTextColor }]}>
-                    Edit User
+                    Edit Profile
                 </Text>
-                <View style={styles.profileWrapper}>
-                        {image ? (
-                            <Image
-                                source={{ uri: "data:image/jpeg;base64," + image }}
-                                style={styles.profileImage}
-                            />
-                        ) : initialValue.imageUrl ? (
-                            <Image
-                                source={{ uri: initialValue.imageUrl }}
-                                style={styles.profileImage}
-                            />
-                        ) : (
-                            <Image
-                                source={require("@/assets/images/defaultProfile.png")}
-                                style={styles.profileImage}
-                            />
-                        )}
-                        <TouchableOpacity onPress={pickImage} style={styles.cameraIcon}>
-                            <MaterialIcons
-                                name="camera-alt"
-                                size={30}
-                                color={colors.primaryTextColor}
-                            />
-                        </TouchableOpacity>
-                    </View>
                 <Formik
                     initialValues={initialValue}
                     onSubmit={(values) => handleForm(values)}
-                    validationSchema={validationEditUserSchema}
+                    validationSchema={validationEditProfileSchema}
                 >
                     {({
                         handleChange,
@@ -221,5 +172,5 @@ const UserEditForm: React.FC<Props> = ({
     );
 };
 
-export default UserEditForm;
+export default ProfileEditForm;
 

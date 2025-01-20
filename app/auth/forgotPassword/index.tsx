@@ -19,7 +19,7 @@ import { ForgetFormValues } from "@/types";
 import Toast from "react-native-toast-message";
 import FlashMessage from "react-native-flash-message";
 import { AuthType } from "@/types/Auth"
-import { CustomTextInput } from "@/components/form"
+import { CustomTextInput } from "@/components/Form"
 import { useThemeContext } from "@/context/ThemeContext";
 import { useAuthContext } from '@/context/AuthContext';
 import AuthHeader from '../components/AuthHeader';

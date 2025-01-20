@@ -25,7 +25,7 @@ type Props = {
     icon?: MICON
     [key: string]: any;
     label?: string
-    editable? : boolean
+    editable?: boolean
 };
 
 export function CustomTextInput({
