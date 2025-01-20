@@ -63,9 +63,9 @@ const RootLayoutNav = () => {
           >
             <AuthProvider>
               <ThemeProvider>
-                <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+                {/* <ScrollView contentContainerStyle={{ flexGrow: 1 }}> */}
                   <InitialLayout />
-                </ScrollView>
+                {/* </ScrollView> */}
               </ThemeProvider>
             </AuthProvider>
           </KeyboardAvoidingView>

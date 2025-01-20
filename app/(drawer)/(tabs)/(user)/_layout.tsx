@@ -6,10 +6,6 @@ const _layout = () => {
         <Stack>
             <Stack.Screen name="pages/index" options={{ headerShown: false }} />
             <Stack.Screen
-                name="pages/userDetail"
-                options={{ headerShown: false }}
-            />
-            <Stack.Screen
                 name="pages/[id]"
                 options={{
                     headerShown: false,

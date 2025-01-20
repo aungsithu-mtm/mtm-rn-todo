@@ -56,9 +56,6 @@ const styles = StyleSheet.create({
         borderBottomEndRadius: 15,
         padding: 10,
         overflow: "hidden",
-        // shadowOffset: { width: 0, height: 2 },
-        // shadowOpacity: 0.2,
-        // shadowRadius: 2,
         boxShadow: '0 4 8 0 rgba(0, 0, 0, 0.2)',
         width: '95%',
         marginHorizontal: 'auto'
