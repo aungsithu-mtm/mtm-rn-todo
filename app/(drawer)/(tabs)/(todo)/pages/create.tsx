@@ -6,7 +6,7 @@ import TaskForm from '../components/TaskForm'
 import { AddTaskForm } from '@/types';
 import { createTask } from '@/hooks/useTask';
 
-const MemberList: React.FC = () => {
+const Create: React.FC = () => {
     const initialValue: AddTaskForm = {
         title: '',
         description: '',
@@ -51,4 +51,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default MemberList;
+export default Create;

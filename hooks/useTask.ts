@@ -105,9 +105,9 @@ const updateTask = () => {
                 if (task) {
                     const result = await taskMutation({
                         variables: {
-                            updateTaskId: task._id,
+                            updateTaskId: task._id || "",
                             input: {
-                                _id: task._id,
+                                _id: task._id || "",
                                 title: task.title,
                                 description: task.description,
                                 isActive: task.isActive,

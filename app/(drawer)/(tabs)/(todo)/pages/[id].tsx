@@ -7,16 +7,38 @@ import { ConfirmModal } from "@/components/Modal";
 import { uploadImage } from "@/utils/cloudinary";
 import { EditUserForm, User } from "@/types";
 import { getUser, updateUser, deleteUser } from "@/hooks/useUser";
-import { getTask } from "@/hooks/useTask";
+import { getTask, deleteTasks } from "@/hooks/useTask";
+import { formatTimestamp } from "@/utils/dateHandler";
 
 export default function Index() {
     const navigate = useRouter();
     const { colors } = useThemeContext();
+    const [isConfirm, setIsComfirm] = useState<boolean>(false);
     const { id } = useLocalSearchParams();
     const { task } = getTask(id as string);
+    const { setTaskList } = deleteTasks();
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isEnabled, setIsEnabled] = useState(false);
     const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+
+    
+    const handleDelete = async (id: string | undefined) => {
+        try {
+            if (id) {
+                setIsLoading(true);
+                setTaskList([id])
+            }
+            setIsLoading(false)
+            setIsComfirm(false);
+            navigate.navigate({
+                pathname: "/pages"
+            })
+
+        } catch (err) {
+            console.error(err);
+            setIsLoading(false);
+        }
+    };
 
     return (
         <View style={[styles.container, { backgroundColor: colors.primaryBgColor }]}>
@@ -33,7 +55,7 @@ export default function Index() {
                     <Text style={[styles.dateText, {
                         color: colors.primaryTextColor
                     }]}>
-                        26-01-2024 (Thursday)
+                       {formatTimestamp(task?.date)}
                     </Text>
                 </View>
                 <View style={styles.infoContainer}>
@@ -95,12 +117,17 @@ export default function Index() {
                         thumbColor={isEnabled ? '#f5dd4b' : '#f4f3f4'}
                         ios_backgroundColor="#3e3e3e"
                         onValueChange={toggleSwitch}
-                        value={isEnabled}
+                        value={isEnabled}Aung Si Thu ( Office )
                     />
                 </View>
                 <View style={styles.btnContainer}>
                     <TouchableOpacity
-                        onPress={() => console.log("HELLO")}
+                       onPress={() => {
+                            navigate.push({
+                                pathname: '/pages/edit',
+                                params: { id: id},
+                            })
+                        }}
                         style={{ marginHorizontal: 15 }}
                     >
                         <FontAwesome5
@@ -110,7 +137,7 @@ export default function Index() {
                         />
                     </TouchableOpacity>
                     <TouchableOpacity
-                        onPress={() => console.log("HELLO")}
+                         onPress={() => setIsComfirm(true)}
                         style={{ marginHorizontal: 15 }}
                     >
                         <MaterialIcons
@@ -120,6 +147,15 @@ export default function Index() {
                         />
                     </TouchableOpacity>
                 </View>
+                 <ConfirmModal
+                    header='Delete Task'
+                    message='Are you sure, you want to delete'
+                    handleForm={() => handleDelete(id as string)}
+                    btnLabel='Delete'
+                    isLoading={isLoading}
+                    isOpen={isConfirm}
+                    setIsOpen={setIsComfirm}
+                />
             </View>
         </View>
     );
@@ -139,7 +175,7 @@ const styles = StyleSheet.create({
         paddingVertical: 20
     },
     dateText: {
-        fontSize: 23,
+        fontSize: 20,
         width: 400,
         fontWeight: 'bold'
     },

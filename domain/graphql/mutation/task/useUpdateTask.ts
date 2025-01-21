@@ -4,7 +4,7 @@ import { ResponseMessage } from "@/types";
 import { useMutation } from "@apollo/client";
 
 const UPDATE_TASK_MUTATION = gql`
-  mutation UpdateTask($updateTaskId: String, $input: TaskInput!) {
+  mutation UpdateTask($updateTaskId: String, $input: UpdateTaskInput!) {
     updateTask(id: $updateTaskId, input: $input) {
       data
       isSuccess

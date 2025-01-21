@@ -30,8 +30,30 @@ function getDayOfWeek(date: Date) {
     return daysOfWeek[date.getDay()];
 }
 
+function formatTimestamp(timestamp: number | string | undefined): string {
+    const date = new Date(Number(timestamp));
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
+    const year = date.getFullYear();
+    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const dayName = daysOfWeek[date.getDay()];
+
+    return `${day}-${month}-${year} (${dayName})`;
+}
+
+function timestampToDateString(timestamp: number | string | undefined): string {
+    const date = new Date(Number(timestamp));
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
+    const year = date.getFullYear();
+    return `${year}-${month}-${day}`;
+}
+
+
 export {
     formatDate,
     changeDate,
-    getDayOfWeek
+    getDayOfWeek,
+    formatTimestamp,
+    timestampToDateString
 }

@@ -19,7 +19,7 @@ type Props = {
     mode: 'create' | 'edit'
 };
 
-const UserCreateForm: React.FC<Props> = ({
+const TaskForm: React.FC<Props> = ({
     handleForm,
     initialValue,
     loading,
@@ -27,7 +27,6 @@ const UserCreateForm: React.FC<Props> = ({
     mode
 }) => {
     const { colors } = useThemeContext();
-
     return (
         <ScrollView>
             <View style={[styles.formContainer, { flex: 1 }]}>
@@ -125,7 +124,7 @@ const UserCreateForm: React.FC<Props> = ({
                                 loading={loading}
                                 handleSubmit={handleSubmit}
                                 style={{ backgroundColor: colors.primaryTextColor }}
-                                btnLabel={"Create"}
+                                btnLabel={mode === 'edit' ? 'Edit' : "Create"}
                                 labelStyle={[styles.btnText, { color: colors.primaryBgColor }]}
                             />
                         </>
@@ -137,6 +136,6 @@ const UserCreateForm: React.FC<Props> = ({
     );
 };
 
-export default UserCreateForm;
+export default TaskForm;
 
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     TextInput,
     StyleSheet,
@@ -9,6 +9,7 @@ import {
 import { useThemeContext } from "@/context/ThemeContext";
 import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";
 import { MaterialIcons } from "@expo/vector-icons";
+import { timestampToDateString } from "@/utils/dateHandler";
 
 type Props = {
     handleChange: (text: string) => void;
@@ -18,7 +19,7 @@ type Props = {
     name: string;
     errors?: string;
     touched?: boolean;
-    label?: string,
+    label?: string;
     [key: string]: any;
 };
 
@@ -33,8 +34,18 @@ export function DateTimeInput({
     ...props
 }: Props) {
     const { colors } = useThemeContext();
-    const [date, setDate] = useState<Date>(value ? new Date(value) : new Date());
+    const [date, setDate] = useState<Date>(new Date());
     const [show, setShow] = useState(false);
+    const [defaultValue, setDefauleValue] = useState<string>(value);
+
+    useEffect(() => {
+        if (value) {
+            const parsedDate = new Date(value);
+            if (!isNaN(parsedDate.getTime())) {
+                setDate(parsedDate);
+            }
+        }
+    }, [value]);
 
     const onChange = (event: DateTimePickerEvent, selectedDate?: Date) => {
         setShow(false);
@@ -43,6 +54,7 @@ export function DateTimeInput({
 
             if (mode === "date") {
                 const formattedDate = selectedDate.toISOString().split("T")[0];
+                setDefauleValue("");
                 handleChange(formattedDate);
             } else if (mode === "time") {
                 const hours = selectedDate.getHours().toString().padStart(2, "0");
@@ -61,9 +73,14 @@ export function DateTimeInput({
         <View>
             {label && (
                 <View style={styles.labelContainer}>
-                    <Text style={[styles.label, {
-                        color: props.color ? props.color : colors.primaryTextColor
-                    }]}>{label}</Text>
+                    <Text
+                        style={[
+                            styles.label,
+                            { color: props.color ? props.color : colors.primaryTextColor },
+                        ]}
+                    >
+                        {label}
+                    </Text>
                 </View>
             )}
             <TouchableOpacity style={[styles.textInputContainer]} onPress={showPicker}>
@@ -72,24 +89,27 @@ export function DateTimeInput({
                         styles.textInput,
                         {
                             borderColor: props.color ? props.color : colors.secondaryBgColor,
-                            paddingLeft: 40
+                            paddingLeft: 40,
                         },
                     ]}
                     placeholderTextColor={colors.primary}
                     autoCapitalize="none"
                     onBlur={handleBlur}
                     editable={false}
-                    value={value}
+                    value={
+                        defaultValue && mode === 'date' 
+                        ? timestampToDateString(value)
+                        : value
+                    }
                     {...props}
                 />
 
                 <MaterialIcons
-                    name={mode === "date" ? 'calendar-month' : 'access-time'}
+                    name={mode === "date" ? "calendar-month" : "access-time"}
                     size={20}
                     color={props.color ? props.color : colors.primaryTextColor}
                     style={styles.icon}
                 />
-
             </TouchableOpacity>
             {errors && touched && (
                 <Text
@@ -118,7 +138,7 @@ export function DateTimeInput({
 const styles = StyleSheet.create({
     textInputContainer: {
         position: "relative",
-        width: "100%"
+        width: "100%",
     },
     textInput: {
         padding: 15,
@@ -128,7 +148,7 @@ const styles = StyleSheet.create({
         borderRadius: 21,
     },
     labelContainer: {
-        flexDirection: 'row',
+        flexDirection: "row",
         marginLeft: 5,
     },
     label: {

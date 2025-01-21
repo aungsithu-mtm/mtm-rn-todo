@@ -2,13 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native';
 import { useThemeContext } from '@/context/ThemeContext';
 import { AntDesign } from '@expo/vector-icons';
-import { FormModal } from '@/components/Modal'
 import { SearchInput } from '@/components/Form'
 import { useRouter } from "expo-router";
-import { AddUserForm, User } from '@/types';
 import { createUser, getUsers } from '@/hooks/useUser';
 import { LinearGradient } from "expo-linear-gradient";
-import { uploadImage } from "@/utils/cloudinary";
 import { useIsFocused } from '@react-navigation/native';
 import { Task } from '@/types';
 import { getTasks } from '@/hooks/useTask';
@@ -121,8 +118,8 @@ const MemberList: React.FC = () => {
 
                 <TouchableOpacity
                     onPress={() => {
-                        navigate.navigate({
-                            pathname: "/pages/create",
+                        navigate.push({
+                            pathname: '/pages/create',
                         })
                     }}
                     style={[styles.addBtn, { backgroundColor: colors.primaryBgColor }]}
@@ -245,7 +242,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     title: {
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: 'bold',
     },
     time: {

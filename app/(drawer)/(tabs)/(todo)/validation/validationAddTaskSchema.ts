@@ -12,8 +12,7 @@ const AddTaskSchema = Yup.object().shape({
     description: Yup.string()
         .min(3, "Description must be at least 3 characters")
         .max(198, "Description must be at most 198 characters"),
-    date: Yup.date()
-        .typeError("Date must be a valid date")
+    date: Yup.string()
         .required(isRequired("Date")),
     fromTime: Yup.string()
         .matches(/^([01]?\d|2[0-3]):[0-5]\d$/, "From Time must be in HH:mm format")
