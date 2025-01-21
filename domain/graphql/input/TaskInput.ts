@@ -1,17 +1,4 @@
-export type Task = {
-    _id: string
-    title: string
-    description: string
-    userId: string
-    date: string
-    fromTime: string
-    toTime: string
-    imageUrl: string
-    status: string
-    isActive: boolean
-}
-
-export type AddTaskForm = {
+export type TaskInput = {
     title: string
     description?: string
     date: string
@@ -21,7 +8,7 @@ export type AddTaskForm = {
     isActive?: boolean
 }
 
-export type EditTaskForm = {
+export type UpdateTaskInput = {
     _id: string
     title: string
     description?: string
@@ -31,4 +18,9 @@ export type EditTaskForm = {
     imageUrl?: string
     isActive?: boolean
     status?: string
+}
+
+export type ToggleStatusInput = {
+    _id: string
+    status: string
 }

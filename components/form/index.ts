@@ -1,3 +1,3 @@
-export * from './DateInput'
+export * from './DateTimeInput'
 export * from './CustomTextInput'
 export * from './SearchInput'

@@ -22,7 +22,7 @@ export type UserVariables = {
     _id: string
 }
 
-export type UserResponse = {
+type UserResponse = {
     user: User
 }
 

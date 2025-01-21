@@ -10,37 +10,39 @@ import { createUser, getUsers } from '@/hooks/useUser';
 import { LinearGradient } from "expo-linear-gradient";
 import { uploadImage } from "@/utils/cloudinary";
 import { useIsFocused } from '@react-navigation/native';
+import { Task } from '@/types';
+import { getTasks } from '@/hooks/useTask';
 
 const MemberList: React.FC = () => {
 
     const navigate = useRouter();
     const { colors } = useThemeContext();
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [isOpen, setIsOpen] = useState<boolean>(false)
-    const [searchInput, setSearchInput] = useState<string>("");
-    const { refetchUser } = getUsers();
     const isFocused = useIsFocused();
-    const [members, setMembers] = useState<[User]>();
-    const [filteredMembers, setFilteredMembers] = useState<User[]>();
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [searchInput, setSearchInput] = useState<string>("");
+    const [tasks, setTasks] = useState<[Task]>();
+    const [filterTasks, setFilterTasks] = useState<Task[]>();
+    const [multipleSelected, setMultipleSelected] = useState<boolean>(false);
     const { setUser } = createUser();
-
-    const fetchData = async () => {
-        const data = await refetchUser();
-        if (data.data) {
-            const members = data.data.users.map((user) => ({
-                ...user,
-            }));
-            setMembers(data.data.users);
-        }
-    };
+    const { refetchTask } = getTasks();
 
     useEffect(() => {
+        const fetchData = async () => {
+            const data = await refetchTask();
+            if (data.data) {
+                const tasksWithChecked = data.data.tasks.map((task) => ({
+                    ...task,
+                    checked: false,
+                }));
+                setTasks(data.data.tasks);
+                setMultipleSelected(false);
+            }
+        };
         fetchData();
-    }, [isFocused, isOpen]);
+    }, [isFocused]);
 
 
-
-    const renderItem = ({ item }: { item: User }) => (
+    const renderItem = ({ item }: { item: Task }) => (
         <TouchableOpacity
             onPress={() =>
                 navigate.navigate({
@@ -51,10 +53,12 @@ const MemberList: React.FC = () => {
             style={[styles.taskCard, { backgroundColor: colors.primaryBgColor2 }]}
         >
             <View style={styles.info}>
-                <Text style={[styles.title, { color: colors.primaryTextColor }]}>{item.username}</Text>
-                <Text style={[styles.time,{ color: colors.primaryTextColor }]}>
-                    12:00PM - 01:00AM
+                <Text style={[styles.title, { color: colors.primaryTextColor }]}>{item.title}</Text>
+                {(item.fromTime || item.toTime) && (
+                    <Text style={[styles.time, { color: colors.primaryTextColor }]}>
+                        {item.fromTime} - {item.toTime}
                     </Text>
+                )}
             </View>
             <View style={styles.actions}>
 
@@ -69,9 +73,9 @@ const MemberList: React.FC = () => {
     return (
         <>
             <View style={[styles.container, { backgroundColor: colors.primaryBgColor }]}>
-            <LinearGradient
-                colors={["#BCE1EE", "#E5F700"]}
-                style={styles.card}
+                <LinearGradient
+                    colors={["#BCE1EE", "#E5F700"]}
+                    style={styles.card}
                 >
                     <View style={styles.cardHeader}>
                         <Text style={styles.cardHeaderTitle}>
@@ -104,19 +108,23 @@ const MemberList: React.FC = () => {
                 </View>
 
                 <FlatList
-                    data={searchInput ? filteredMembers : members}
+                    data={searchInput ? filterTasks : tasks}
                     keyExtractor={(item) => item._id}
                     renderItem={renderItem}
                     contentContainerStyle={[styles.list]}
                     ListEmptyComponent={
                         <Text style={[styles.emptyText, {
-                            color: colors   .secondary
-                        }]}>No members available.</Text>
+                            color: colors.secondary
+                        }]}>Yay! You are free, Just take a rest</Text>
                     }
                 />
-            
+
                 <TouchableOpacity
-                    onPress={() => setIsOpen(true)}
+                    onPress={() => {
+                        navigate.navigate({
+                            pathname: "/pages/create",
+                        })
+                    }}
                     style={[styles.addBtn, { backgroundColor: colors.primaryBgColor }]}
                 >
                     <AntDesign
@@ -136,7 +144,7 @@ const styles = StyleSheet.create({
         position: 'relative',
     },
     //Card Styles
-    card:{
+    card: {
         borderRadius: 12,
         padding: 20,
         margin: 20,
@@ -150,43 +158,43 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         marginBottom: 20,
     },
-    cardHeaderTitle:{
+    cardHeaderTitle: {
         fontSize: 18,
         fontWeight: "bold",
         color: "#05445E",
     },
-    cardCalendar:{
+    cardCalendar: {
         width: 100
     },
-    cardHeaderDate:{
+    cardHeaderDate: {
         fontSize: 14,
         fontWeight: "bold",
         color: "#05445E",
         textAlign: 'right'
     },
-    cardHeaderDay:{
+    cardHeaderDay: {
         fontSize: 12,
         color: "#05445E",
         opacity: 0.8,
-        textAlign:'right'
+        textAlign: 'right'
     },
-    progressSection:{
+    progressSection: {
 
     },
-    progressTitleContainer:{
+    progressTitleContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between'
     },
-    progressTitle:{
+    progressTitle: {
         color: "#05445E",
         fontSize: 13
     },
-    progressPercent:{
+    progressPercent: {
         color: "#05445E",
         fontSize: 13
     },
 
-    progressBar:{
+    progressBar: {
         width: '100%',
         height: 20,
         backgroundColor: "#D1F1FF",
@@ -194,7 +202,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         position: 'relative'
     },
-    progressFill:{
+    progressFill: {
         width: '50%',
         height: 20,
         borderRadius: 10,
@@ -206,8 +214,8 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         width: '95%',
         marginHorizontal: 'auto'
-    },  
-    listHeaderText:{
+    },
+    listHeaderText: {
         fontSize: 24,
         fontWeight: 'bold',
         marginVertical: 5
@@ -217,7 +225,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 'auto',
         padding: 10,
     },
-    searchContainer:{
+    searchContainer: {
         width: 200,
     },
     taskCard: {

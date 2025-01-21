@@ -56,11 +56,15 @@ export function CustomTextInput({
         setPasswordVisible((prev) => !prev);
     };
 
+    const inputHeight = props.numberOfLines && (props.numberOfLines * 25)
+
     return (
         <>
             {label && (
                 <View style={styles.labelContainer}>
-                    <Text style={styles.label}>{label}</Text>
+                    <Text style={[styles.label, {
+                        color: props.color ? props.color : colors.primaryTextColor
+                    }]}>{label}</Text>
                 </View>
             )}
             <View style={[styles.textInputContainer]}>
@@ -69,7 +73,8 @@ export function CustomTextInput({
                         styles.textInput,
                         {
                             borderColor: props.color ? props.color : colors.secondaryBgColor,
-                            paddingLeft: icon ? 40 : 15
+                            paddingLeft: icon ? 40 : 15,
+                            height: inputHeight
                         },
                     ]}
                     secureTextEntry={isPassword && !isPasswordVisible}

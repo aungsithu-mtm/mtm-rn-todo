@@ -21,8 +21,23 @@ const _layout = () => {
     };
 
     const currentRouteName = getNestedRouteName(navigationState);
-    const hideTabBarScreens = ['pages/[id]'];
+    const hideTabBarScreens = ['pages/[id]', 'pages/create', 'pages/edit'];
     const isSpecificScreens = hideTabBarScreens.includes(currentRouteName ? currentRouteName : '');
+
+    const getCustomTitle = (routeName: string | null): string | undefined => {
+        switch (routeName) {
+            case 'pages/[id]':
+                return "Detail";
+            case 'pages/create':
+                return "Create";
+            case 'pages/edit':
+                return "Edit";
+            default:
+                return undefined;
+        }
+    };
+
+    const Customtitle = getCustomTitle(currentRouteName);
 
     const getScreenOptions = (
         icon: keyof typeof MaterialIcons.glyphMap,
@@ -37,8 +52,7 @@ const _layout = () => {
         ),
         tabBarActiveTintColor: colors.tabTextTintColor,
         tabBarInactiveTintColor: colors.tabTextColor,
-        title: isSpecificScreens ? 'Detail' : title,
-
+        title: Customtitle || title,
         headerTitleAlign: "center" as const,
         headerStyle: {
             backgroundColor: colors.primaryBgColor,

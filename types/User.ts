@@ -47,3 +47,4 @@ export type ResponseMessage = {
     type: string,
     data: JSON
 };
+
