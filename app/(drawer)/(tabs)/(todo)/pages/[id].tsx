@@ -6,22 +6,36 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { ConfirmModal } from "@/components/Modal";
 import { getTask, deleteTasks } from "@/hooks/useTask";
 import { formatTimestamp } from "@/utils/dateHandler";
+import { Task } from "@/types";
+import { useIsFocused } from "@react-navigation/native";
 
 export default function Index() {
     const navigate = useRouter();
     const { colors } = useThemeContext();
     const [isConfirm, setIsComfirm] = useState<boolean>(false);
     const { id } = useLocalSearchParams();
-    const { task } = getTask(id as string);
-    const { setTaskList } = deleteTasks();
+    const { refetch } = getTask(id as string);
+    const [task, setTask] = useState<Task>();
+    const { handleDeleteTasks } = deleteTasks();
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const isFocused = useIsFocused();
 
+    const refetchTask = async () => {
+        const data = await refetch();
+        if (data) {
+            setTask(data.data.getTask);
+        }
+    }
+
+    useEffect(() => {
+        refetchTask();
+    }, [isFocused]);
 
     const handleDelete = async (id: string | undefined) => {
         try {
             if (id) {
                 setIsLoading(true);
-                setTaskList([id])
+                await handleDeleteTasks([id])
             }
             setIsLoading(false)
             setIsComfirm(false);
@@ -95,14 +109,6 @@ export default function Index() {
                         </Text>
                     </View>
                 )}
-
-                <View style={styles.infoContainer}>
-                    <Text style={[styles.switchLabel, {
-                        color: colors.primaryTextColor
-                    }]}>
-                        Active
-                    </Text>
-                </View>
                 <View style={styles.btnContainer}>
                     <TouchableOpacity
                         onPress={() => {
@@ -189,9 +195,4 @@ const styles = StyleSheet.create({
         marginHorizontal: 'auto',
         marginVertical: 50,
     },
-    switchLabel: {
-        fontSize: 17,
-        fontWeight: 'bold',
-        marginHorizontal: 10
-    }
 });

@@ -23,8 +23,8 @@ const TodoList: React.FC = () => {
     const [tasks, setTasks] = useState<Task[]>([]);
     const [multipleSelected, setMultipleSelected] = useState<boolean>(false);
     const { refetchTask } = getTasksByDate(todayDate);
-    const { setTask } = updateTaskStatus();
-    const { setTaskList } = deleteTasks();
+    const { handleUpdateTask } = updateTaskStatus();
+    const { handleDeleteTasks } = deleteTasks();
 
     const [progress, setProgress] = useState<string>();
 
@@ -56,12 +56,12 @@ const TodoList: React.FC = () => {
         try {
             setIsLoading(true);
             if (status === TaskStatus.NEW) {
-                setTask({
+                await handleUpdateTask({
                     _id,
                     status: TaskStatus.COMPLETED
                 })
             } else {
-                setTask({
+                await handleUpdateTask({
                     _id,
                     status: TaskStatus.NEW
                 })
@@ -97,7 +97,7 @@ const TodoList: React.FC = () => {
         const checkedNotes = tasks
             .filter((task) => task.checked)
             .map((task) => task._id);
-        await setTaskList(checkedNotes);
+        await handleDeleteTasks(checkedNotes);
         setTasks((prevNotes) => prevNotes.filter((note) => !note.checked));
         setMultipleSelected(false);
         setIsComfirm(false);

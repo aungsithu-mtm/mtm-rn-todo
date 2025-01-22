@@ -15,8 +15,8 @@ export default function Index() {
     const [isOpen, setIsOpen] = useState(false);
     const { id } = useLocalSearchParams();
     const { user, refetch } = getUser(id as string)
-    const { setDeleteUserId } = deleteUser();
-    const { setUser } = updateUser();
+    const { handleDeleteUser } = deleteUser();
+    const { handleUpdateUser } = updateUser();
     const [profileImage, setProfileImage] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isConfirm, setIsComfirm] = useState<boolean>(false);
@@ -45,7 +45,8 @@ export default function Index() {
                     };
                 });
             }
-            setUser(data);
+            await handleUpdateUser(data);
+            refetch();
             setProfileImage(null);
             setIsOpen(false);
             setIsLoading(false);
@@ -59,7 +60,7 @@ export default function Index() {
         try {
             if (id) {
                 setIsLoading(true);
-                setDeleteUserId(id)
+                await handleDeleteUser(id)
             }
             setIsLoading(false)
             setIsComfirm(false);
@@ -242,5 +243,5 @@ const styles = StyleSheet.create({
         fontWeight: "600",
         marginLeft: 8,
     },
-  
+
 });

@@ -25,7 +25,7 @@ const getTasks = () => {
             loading: loadingTask,
             data: dataTask,
             error: errorTask,
-            refetch: refetchTask,
+            refetch: refetchTasks,
         },
     ] = useTasksQuery(
         () => { },
@@ -36,10 +36,9 @@ const getTasks = () => {
         loadingProfile: loadingTask && calledTask,
         errorTask,
         profile: dataTask && dataTask.tasks,
-        refetchTask,
+        refetchTasks,
     };
 };
-
 
 const getTasksByDate = (date: string) => {
     const [
@@ -66,9 +65,9 @@ const getTasksByDate = (date: string) => {
 
     return {
         getTasks,
-        loading: loadingTask && calledTask, // Fix loading logic
+        loading: loadingTask && calledTask,
         errorTask,
-        tasks: dataTask?.tasksByDate || [], // Use `dataTask?.tasksByDate` safely
+        tasks: dataTask?.tasksByDate || [],
         refetchTask,
     };
 };
@@ -77,99 +76,79 @@ const getTask = (id: string) => {
     const [task, setTask] = useState<Task>();
     const [isSuccess, setIsSuccess] = useState<boolean>(false);
 
-    try {
-        const { data, error } = useTaskQuery({ getTaskId: id }, !id);
+    const { data, error, refetch } = useTaskQuery({ getTaskId: id }, !id);
 
-        useEffect(() => {
-            if (error) {
-                const err = error as ApolloError;
-                ShowToast("Error", errorHandler(err), "error");
-            }
+    useEffect(() => {
+        if (error) {
+            const err = error as ApolloError;
+            ShowToast("Error", errorHandler(err), "error");
+        }
 
-            if (data) {
-                setTask(data.getTask);
-                setIsSuccess(true);
-            }
-        }, [error, data]);
-    } catch (error) {
-        const err = error as ApolloError;
-        ShowToast("Error", errorHandler(err), "error");
-    }
-    return { task, isSuccess };
+        if (data) {
+            setTask(data.getTask);
+            setIsSuccess(true);
+        }
+    }, [error, data]);
+
+    return { task, isSuccess, refetch };
 };
 
 const createTask = () => {
-    const [task, setTask] = useState<AddTaskForm>();
     const [isSuccess, setIsSuccess] = useState<boolean>(false);
     const [taskMutation] = useTaskCreateMutation();
 
-    useEffect(() => {
-        (async () => {
-            try {
-                if (task) {
-                    const result = await taskMutation({
-                        variables: {
-                            input: task!,
-                        },
-                    });
-                    if (result.data?.createTask) {
-                        setIsSuccess(true);
-                        setTask(undefined);
-                        ShowToast("Success", result.data.createTask.message, "success");
-                    }
-                }
-            } catch (error) {
-                const err = error as ApolloError;
-                ShowToast("Error", errorHandler(err), "error");
+    const handleCreateTask = async (task: AddTaskForm) => {
+        try {
+            const result = await taskMutation({
+                variables: { input: task },
+            });
+
+            if (result.data?.createTask) {
+                setIsSuccess(true);
+                ShowToast("Success", result.data.createTask.message, "success");
             }
-        })();
-    }, [task]);
-    return { isSuccess, setTask };
+        } catch (error) {
+            const err = error as ApolloError;
+            ShowToast("Error", errorHandler(err), "error");
+        }
+    };
+    return { isSuccess, handleCreateTask };
 };
 
 const updateTask = () => {
-    const [task, setTask] = useState<EditTaskForm>();
     const [isSuccess, setIsSuccess] = useState<boolean>(false);
     const [taskMutation] = useTaskUpdateMutation();
     const navigate = useRouter();
 
-    useEffect(() => {
-        (async () => {
-            try {
-                if (task) {
-                    const result = await taskMutation({
-                        variables: {
-                            updateTaskId: task._id || "",
-                            input: {
-                                _id: task._id || "",
-                                title: task.title,
-                                description: task.description,
-                                isActive: task.isActive,
-                                date: task.date,
-                                fromTime: task.fromTime,
-                                toTime: task.toTime,
-                                status: task.status
-                            },
-                        },
-                    });
-                    if (result.data?.updateTask) {
-                        setIsSuccess(true);
-                        setTask(undefined);
-                        navigate.replace({
-                            pathname: "/(drawer)/(tabs)/(todo)/pages",
-                            params: { id: task._id as string },
-                        });
-                        ShowToast("Success", result.data.updateTask.message, "success");
-                    }
-                }
-            } catch (error) {
-                const err = error as ApolloError;
-                ShowToast("Error", errorHandler(err), "error");
-            }
-        })();
-    }, [task]);
+    const handleUpdateTask = async (task: EditTaskForm) => {
+        try {
+            const result = await taskMutation({
+                variables: {
+                    updateTaskId: task._id || "",
+                    input: {
+                        _id: task._id || "",
+                        title: task.title,
+                        description: task.description,
+                        isActive: task.isActive,
+                        date: task.date,
+                        fromTime: task.fromTime,
+                        toTime: task.toTime,
+                        status: task.status,
+                    },
+                },
+            });
 
-    return { isSuccess, setTask };
+            if (result.data?.updateTask) {
+                setIsSuccess(true);
+                ShowToast("Success", result.data.updateTask.message, "success");
+            }
+        } catch (error) {
+            const err = error as ApolloError;
+            ShowToast("Error", errorHandler(err), "error");
+        }
+    };
+
+    return { isSuccess, handleUpdateTask };
 };
 
 const updateTaskStatus = () => {
@@ -178,59 +157,56 @@ const updateTaskStatus = () => {
     const [taskMutation] = useUpdateTasksStatusMutation();
     const navigate = useRouter();
 
-    useEffect(() => {
-        (async () => {
-            try {
-                if (task) {
-                    const result = await taskMutation({
-                        variables: {
-                            input: task
-                        },
-                    });
-                    if (result.data?.updateTasksStatus) {
-                        setIsSuccess(true);
-                        setTask(undefined);
-                        ShowToast("Success", result.data.updateTasksStatus.message, "success");
-                    }
-                }
-            } catch (error) {
-                const err = error as ApolloError;
-                ShowToast("Error", errorHandler(err), "error");
+    const handleUpdateTask = async (newTask: UpdateTaskStatusForm) => {
+        setTask(newTask);
+        try {
+            const result = await taskMutation({
+                variables: {
+                    input: newTask,
+                },
+            });
+            if (result.data?.updateTasksStatus) {
+                setIsSuccess(true);
+                setTask(undefined); // Reset task state
+                ShowToast("Success", result.data.updateTasksStatus.message, "success");
             }
-        })();
-    }, [task]);
+        } catch (error) {
+            const err = error as ApolloError;
+            ShowToast("Error", errorHandler(err), "error");
+        }
+    };
 
-    return { isSuccess, setTask };
-};
+    return { isSuccess, handleUpdateTask };
+}
 
 const deleteTasks = () => {
     const [taskList, setTaskList] = useState<string[]>([]);
     const [isSuccess, setIsSuccess] = useState<boolean>(false);
     const [taskMutation] = useDeleteTasksMutation();
 
-    useEffect(() => {
-        (async () => {
-            try {
-                if (taskList.length != 0) {
-                    const result = await taskMutation({
-                        variables: {
-                            input: taskList
-                        },
-                    });
-                    if (result.data?.deleteTasks) {
-                        setIsSuccess(true);
-                        setTaskList([]);
-                        ShowToast("Success", result.data.deleteTasks.message, "success");
-                    }
-                }
-            } catch (error) {
-                const err = error as ApolloError;
-                ShowToast("Error", errorHandler(err), "error");
-            }
-        })();
-    }, [taskList]);
+    const handleDeleteTasks = async (tasksToDelete: string[]) => {
+        try {
+            setTaskList(tasksToDelete); // Update the task list state
+            if (tasksToDelete.length === 0) return;
 
-    return { isSuccess, setTaskList };
+            const result = await taskMutation({
+                variables: {
+                    input: tasksToDelete,
+                },
+            });
+
+            if (result.data?.deleteTasks) {
+                setIsSuccess(true);
+                setTaskList([]); // Clear the task list state
+                ShowToast("Success", result.data.deleteTasks.message, "success");
+            }
+        } catch (error) {
+            const err = error as ApolloError;
+            ShowToast("Error", errorHandler(err), "error");
+        }
+    };
+
+    return { isSuccess, handleDeleteTasks };
 };
 
 export {

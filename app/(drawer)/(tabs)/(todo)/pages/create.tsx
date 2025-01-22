@@ -19,11 +19,11 @@ const Create: React.FC = () => {
     const navigate = useRouter();
     const { colors } = useThemeContext();
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const { setTask } = createTask();
+    const { handleCreateTask } = createTask();
 
     const handleForm = async (data: AddTaskForm) => {
         setIsLoading(true);
-        setTask(data);
+        await handleCreateTask(data);
         setIsLoading(false);
         navigate.navigate({
             pathname: "/pages",

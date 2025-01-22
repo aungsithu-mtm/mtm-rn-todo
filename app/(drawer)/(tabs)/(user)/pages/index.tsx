@@ -29,7 +29,7 @@ const MemberList: React.FC = () => {
     const isFocused = useIsFocused();
     const [members, setMembers] = useState<[User]>();
     const [filteredMembers, setFilteredMembers] = useState<User[]>();
-    const { setUser } = createUser();
+    const { handleCreateUser } = createUser();
 
     const fetchData = async () => {
         const data = await refetchUser();
@@ -71,7 +71,7 @@ const MemberList: React.FC = () => {
                     };
                 });
             }
-            setUser(data);
+            await handleCreateUser(data);
             await fetchData();
             setProfileImage(null);
             setIsOpen(false);

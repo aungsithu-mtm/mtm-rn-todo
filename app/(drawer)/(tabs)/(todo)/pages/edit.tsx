@@ -16,7 +16,7 @@ const Edit: React.FC = () => {
     const { colors } = useThemeContext();
     const { id } = useLocalSearchParams(); // Extracted `id` from route params
     const { task } = getTask(id as string); // Handle errors if `getTask` fails
-    const { setTask } = updateTask();
+    const { handleUpdateTask } = updateTask();
 
     useEffect(() => {
         if (task) {
@@ -31,10 +31,9 @@ const Edit: React.FC = () => {
     const handleForm = async (data: EditTaskForm) => {
         try {
             setIsLoading(true);
-            setTask(data);
-            router.navigate({
-                pathname: "/pages",
-            })
+            await handleUpdateTask(data);
+            setIsLoading(false);
+            router.back();
         } catch (error) {
             console.error("Failed to save the task:", error);
         } finally {

@@ -55,33 +55,25 @@ const getUser = (id: string) => {
 };
 
 const createUser = () => {
-    const [user, setUser] = useState<AddUserForm>();
     const [isSuccess, setIsSuccess] = useState<boolean>(false);
     const [userMutation] = useUserCreateMutation();
 
-    useEffect(() => {
-        (async () => {
-            try {
-                if (user) {
-                    const result = await userMutation({
-                        variables: {
-                            input: user!,
-                        },
-                    });
-                    if (result.data?.createUser) {
-                        setIsSuccess(true);
-                        setUser(undefined);
-                        ShowToast("Success", result.data.createUser.message, "success");
-                    }
-                }
-            } catch (error) {
-                const err = error as ApolloError;
-                ShowToast("Error", errorHandler(err), "error");
+    const handleCreateUser = async (user: AddUserForm) => {
+        try {
+            const result = await userMutation({
+                variables: { input: user },
+            })
+            if (result.data?.createUser) {
+                setIsSuccess(true);
+                ShowToast("Success", result.data.createUser.message, "success");
             }
-        })();
-    }, [user]);
+        } catch (error) {
+            const err = error as ApolloError;
+            ShowToast("Error", errorHandler(err), "error");
+        }
+    }
     return {
-        isSuccess, setUser
+        isSuccess, handleCreateUser
     };
 };
 
@@ -117,63 +109,53 @@ const deleteUsers = () => {
 };
 
 const deleteUser = () => {
-    const [deleteUserId, setDeleteUserId] = useState<string>();
     const [isSuccess, setIsSuccess] = useState<boolean>(false);
     const [deleteUserMutation] = useDeleteUserMutation();
-    useEffect(() => {
-        (async () => {
-            try {
-                if (deleteUserId) {
-                    const result = await deleteUserMutation({
-                        variables: {
-                            input: deleteUserId
-                        },
-                    });
-                    if (result.data?.deleteSingleUser) {
-                        setIsSuccess(true);
-                        setDeleteUserId('');
-                        ShowToast("Success", result.data.deleteSingleUser.message, "success");
-                    }
-                }
-            } catch (error) {
-                const err = error as ApolloError;
-                ShowToast("Error", errorHandler(err), "error");
+    const handleDeleteUser = async (id: string) => {
+        try {
+            const result = await deleteUserMutation({
+                variables: {
+                    input: id
+                },
+            });
+            if (result.data?.deleteSingleUser) {
+                setIsSuccess(true);
+                ShowToast("Success", result.data.deleteSingleUser.message, "success");
             }
-        })();
-    }, [deleteUserId]);
+        } catch (error) {
+            const err = error as ApolloError;
+            ShowToast("Error", errorHandler(err), "error");
+        }
+    }
 
-    return { isSuccess, setDeleteUserId };
+    return { isSuccess, handleDeleteUser };
 };
 
 
 const updateUser = () => {
-    const [user, setUser] = useState<EditUserForm>();
     const [isSuccess, setIsSuccess] = useState<boolean>(false);
     const [userMutation] = useProfileUpdateMutation();
 
-    useEffect(() => {
-        (async () => {
-            try {
-                if (user) {
-                    const result = await userMutation({
-                        variables: {
-                            input: user!,
-                        },
-                    });
-                    if (result.data?.updateUserProfile) {
-                        setIsSuccess(true);
-                        setUser(undefined);
-                        ShowToast("Success", result.data.updateUserProfile.message, "success");
-                    }
+    const handleUpdateUser = async (user: EditUserForm) => {
+        try {
+            if (user) {
+                const result = await userMutation({
+                    variables: {
+                        input: user!,
+                    },
+                });
+                if (result.data?.updateUserProfile) {
+                    setIsSuccess(true);
+                    ShowToast("Success", result.data.updateUserProfile.message, "success");
                 }
-            } catch (error) {
-                const err = error as ApolloError;
-                ShowToast("Error", errorHandler(err), "error");
             }
-        })();
-    }, [user]);
+        } catch (error) {
+            const err = error as ApolloError;
+            ShowToast("Error", errorHandler(err), "error");
+        }
+    }
     return {
-        isSuccess, setUser
+        isSuccess, handleUpdateUser
     };
 };
 
