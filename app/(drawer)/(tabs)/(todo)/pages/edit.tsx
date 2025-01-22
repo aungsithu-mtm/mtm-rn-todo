@@ -5,6 +5,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import TaskForm from '../components/TaskForm';
 import { EditTaskForm } from '@/types';
 import { updateTask, getTask } from '@/hooks/useTask';
+import { timestampToDateString } from '@/utils/dateHandler';
 
 const Edit: React.FC = () => {
 
@@ -19,7 +20,10 @@ const Edit: React.FC = () => {
 
     useEffect(() => {
         if (task) {
-            setInitialValue(task);
+            setInitialValue({
+                ...task,
+                date: timestampToDateString(task.date)
+            });
         }
     }, [id, task]);
 
@@ -27,7 +31,7 @@ const Edit: React.FC = () => {
     const handleForm = async (data: EditTaskForm) => {
         try {
             setIsLoading(true);
-            setTask(data); 
+            setTask(data);
             router.navigate({
                 pathname: "/pages",
             })
@@ -42,13 +46,13 @@ const Edit: React.FC = () => {
         <View style={[styles.container, { backgroundColor: colors.primaryBgColor }]}>
             {initialValue && (
                 <TaskForm
-                initialValue={initialValue}
-                handleForm={handleForm}
-                loading={isLoading}
-                mode="edit"
+                    initialValue={initialValue}
+                    handleForm={handleForm}
+                    loading={isLoading}
+                    mode="edit"
                 />
             )}
-          
+
         </View>
     );
 };

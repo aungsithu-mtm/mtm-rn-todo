@@ -41,14 +41,13 @@ function formatTimestamp(timestamp: number | string | undefined): string {
     return `${day}-${month}-${year} (${dayName})`;
 }
 
-function timestampToDateString(timestamp: number | string | undefined): string {
+function timestampToDateString(timestamp: number | string | undefined | Date): string {
     const date = new Date(Number(timestamp));
     const day = date.getDate().toString().padStart(2, '0');
     const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
     const year = date.getFullYear();
     return `${year}-${month}-${day}`;
 }
-
 
 export {
     formatDate,

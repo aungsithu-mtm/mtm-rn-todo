@@ -1,14 +1,16 @@
 import {
     useTaskCreateMutation,
     useDeleteTasksMutation,
-    useTaskUpdateMutation
+    useTaskUpdateMutation,
+    useUpdateTasksStatusMutation
 } from "@/domain/graphql/mutation/task";
 
 import {
     useTaskQuery,
-    useTasksQuery
+    useTasksQuery,
+    useTasksByDateQuery
 } from "@/domain/graphql/query/task";
-import { AddTaskForm, EditTaskForm, Task } from "@/types";
+import { AddTaskForm, EditTaskForm, Task, UpdateTaskStatusForm } from "@/types";
 import { errorHandler } from "@/utils/errorHandler";
 import ShowToast from "@/utils/toast";
 import { ApolloError } from "@apollo/client";
@@ -34,6 +36,39 @@ const getTasks = () => {
         loadingProfile: loadingTask && calledTask,
         errorTask,
         profile: dataTask && dataTask.tasks,
+        refetchTask,
+    };
+};
+
+
+const getTasksByDate = (date: string) => {
+    const [
+        getTasks,
+        {
+            called: calledTask,
+            loading: loadingTask,
+            data: dataTask,
+            error: errorTask,
+            refetch: refetchTask
+        },
+    ] = useTasksByDateQuery(
+        () => { },
+        (error) => { console.error("Error occurred:", error); }
+    );
+
+    useEffect(() => {
+        if (date) {
+            getTasks({
+                variables: { getTaskDate: date },
+            });
+        }
+    }, [date, getTasks]);
+
+    return {
+        getTasks,
+        loading: loadingTask && calledTask, // Fix loading logic
+        errorTask,
+        tasks: dataTask?.tasksByDate || [], // Use `dataTask?.tasksByDate` safely
         refetchTask,
     };
 };
@@ -77,7 +112,6 @@ const createTask = () => {
                             input: task!,
                         },
                     });
-                    console.log("Result", result)
                     if (result.data?.createTask) {
                         setIsSuccess(true);
                         setTask(undefined);
@@ -138,6 +172,37 @@ const updateTask = () => {
     return { isSuccess, setTask };
 };
 
+const updateTaskStatus = () => {
+    const [task, setTask] = useState<UpdateTaskStatusForm | undefined>();
+    const [isSuccess, setIsSuccess] = useState<boolean>(false);
+    const [taskMutation] = useUpdateTasksStatusMutation();
+    const navigate = useRouter();
+
+    useEffect(() => {
+        (async () => {
+            try {
+                if (task) {
+                    const result = await taskMutation({
+                        variables: {
+                            input: task
+                        },
+                    });
+                    if (result.data?.updateTasksStatus) {
+                        setIsSuccess(true);
+                        setTask(undefined);
+                        ShowToast("Success", result.data.updateTasksStatus.message, "success");
+                    }
+                }
+            } catch (error) {
+                const err = error as ApolloError;
+                ShowToast("Error", errorHandler(err), "error");
+            }
+        })();
+    }, [task]);
+
+    return { isSuccess, setTask };
+};
+
 const deleteTasks = () => {
     const [taskList, setTaskList] = useState<string[]>([]);
     const [isSuccess, setIsSuccess] = useState<boolean>(false);
@@ -168,4 +233,12 @@ const deleteTasks = () => {
     return { isSuccess, setTaskList };
 };
 
-export { getTasks, getTask, createTask, updateTask, deleteTasks };
+export {
+    getTasks,
+    getTasksByDate,
+    getTask,
+    createTask,
+    updateTask,
+    deleteTasks,
+    updateTaskStatus
+};

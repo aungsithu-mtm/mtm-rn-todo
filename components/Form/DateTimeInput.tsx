@@ -36,7 +36,6 @@ export function DateTimeInput({
     const { colors } = useThemeContext();
     const [date, setDate] = useState<Date>(new Date());
     const [show, setShow] = useState(false);
-    const [defaultValue, setDefauleValue] = useState<string>(value);
 
     useEffect(() => {
         if (value) {
@@ -54,7 +53,6 @@ export function DateTimeInput({
 
             if (mode === "date") {
                 const formattedDate = selectedDate.toISOString().split("T")[0];
-                setDefauleValue("");
                 handleChange(formattedDate);
             } else if (mode === "time") {
                 const hours = selectedDate.getHours().toString().padStart(2, "0");
@@ -96,11 +94,7 @@ export function DateTimeInput({
                     autoCapitalize="none"
                     onBlur={handleBlur}
                     editable={false}
-                    value={
-                        defaultValue && mode === 'date' 
-                        ? timestampToDateString(value)
-                        : value
-                    }
+                    value={value}
                     {...props}
                 />
 

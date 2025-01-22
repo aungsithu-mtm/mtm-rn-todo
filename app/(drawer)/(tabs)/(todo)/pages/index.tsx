@@ -1,72 +1,164 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, Alert, ViewStyle } from 'react-native';
 import { useThemeContext } from '@/context/ThemeContext';
-import { AntDesign } from '@expo/vector-icons';
-import { SearchInput } from '@/components/Form'
+import { AntDesign, MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from "expo-router";
-import { createUser, getUsers } from '@/hooks/useUser';
 import { LinearGradient } from "expo-linear-gradient";
+import Checkbox from "expo-checkbox";
+import { ConfirmModal } from "@/components/Modal";
 import { useIsFocused } from '@react-navigation/native';
 import { Task } from '@/types';
-import { getTasks } from '@/hooks/useTask';
+import { TaskStatus } from '@/constants/task';
+import { updateTaskStatus, getTasksByDate, deleteTasks } from '@/hooks/useTask';
+import { timestampToDateString, getDayOfWeek } from '@/utils/dateHandler';
 
-const MemberList: React.FC = () => {
-
+const TodoList: React.FC = () => {
     const navigate = useRouter();
+    const todayDate = timestampToDateString(new Date());
+    const todayDay = getDayOfWeek(new Date())
     const { colors } = useThemeContext();
     const isFocused = useIsFocused();
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [searchInput, setSearchInput] = useState<string>("");
-    const [tasks, setTasks] = useState<[Task]>();
-    const [filterTasks, setFilterTasks] = useState<Task[]>();
+    const [isConfirm, setIsComfirm] = useState<boolean>(false);
+    const [tasks, setTasks] = useState<Task[]>([]);
     const [multipleSelected, setMultipleSelected] = useState<boolean>(false);
-    const { setUser } = createUser();
-    const { refetchTask } = getTasks();
+    const { refetchTask } = getTasksByDate(todayDate);
+    const { setTask } = updateTaskStatus();
+    const { setTaskList } = deleteTasks();
+
+    const [progress, setProgress] = useState<string>();
+
+    const fetchData = async () => {
+        const data = await refetchTask();
+        if (data.data) {
+            const tasksWithChecked = data.data.tasksByDate.map((task) => ({
+                ...task,
+                checked: false,
+            }));
+            setTasks(tasksWithChecked);
+            const completeTask = data.data.tasksByDate.filter((task) => {
+                return task.status === TaskStatus.COMPLETED;
+            })
+            const percent = (completeTask.length / data.data.tasksByDate.length) * 100
+            if (percent) {
+                setProgress(`${Math.trunc(percent)}%`)
+            } else {
+                setProgress('0%')
+            }
+        }
+    };
 
     useEffect(() => {
-        const fetchData = async () => {
-            const data = await refetchTask();
-            if (data.data) {
-                const tasksWithChecked = data.data.tasks.map((task) => ({
-                    ...task,
-                    checked: false,
-                }));
-                setTasks(data.data.tasks);
-                setMultipleSelected(false);
-            }
-        };
         fetchData();
     }, [isFocused]);
 
-
-    const renderItem = ({ item }: { item: Task }) => (
-        <TouchableOpacity
-            onPress={() =>
-                navigate.navigate({
-                    pathname: "/pages/[id]",
-                    params: { id: item._id },
+    const handleTaskStatus = async (_id: string, status: string) => {
+        try {
+            setIsLoading(true);
+            if (status === TaskStatus.NEW) {
+                setTask({
+                    _id,
+                    status: TaskStatus.COMPLETED
+                })
+            } else {
+                setTask({
+                    _id,
+                    status: TaskStatus.NEW
                 })
             }
-            style={[styles.taskCard, { backgroundColor: colors.primaryBgColor2 }]}
+            fetchData()
+            setIsLoading(false)
+        } catch (err) {
+            console.error(err);
+            setIsLoading(false);
+        }
+    };
+
+
+    const toggleNoteSelection = (id: string) => {
+        setMultipleSelected(true);
+        setTasks((prevTask) => {
+            const updatedTask = prevTask.map((task) =>
+                task._id === id ? { ...task, checked: !task.checked } : task
+            );
+            setMultipleSelected(updatedTask.some((note) => note.checked));
+            return updatedTask;
+        });
+    };
+
+    const deselectAllTasks = () => {
+        setMultipleSelected(false);
+        setTasks((prevTask) =>
+            prevTask.map((task) => ({ ...task, checked: false }))
+        );
+    };
+
+    const deleteSelectedTasks = async () => {
+        const checkedNotes = tasks
+            .filter((task) => task.checked)
+            .map((task) => task._id);
+        await setTaskList(checkedNotes);
+        setTasks((prevNotes) => prevNotes.filter((note) => !note.checked));
+        setMultipleSelected(false);
+        setIsComfirm(false);
+    };
+
+
+    const renderItem = ({ item }: { item: Task }) => (
+        <View
+            style={[styles.taskCard, {
+                backgroundColor: colors.primaryBgColor2,
+                opacity: (item.status == TaskStatus.COMPLETED) ? 0.5 : 1
+            }]}
         >
-            <View style={styles.info}>
-                <Text style={[styles.title, { color: colors.primaryTextColor }]}>{item.title}</Text>
+            {multipleSelected && (
+                <Checkbox
+                    value={item.checked}
+                    onValueChange={() => toggleNoteSelection(item._id)}
+                    color={item.checked ? colors.dark : undefined}
+                    style={{
+                        marginRight: 10
+                    }}
+                />
+            )}
+            <TouchableOpacity
+                onPress={() =>
+                    navigate.navigate({
+                        pathname: "/pages/[id]",
+                        params: { id: item._id },
+                    })
+                }
+                onLongPress={() => toggleNoteSelection(item._id)}
+                style={styles.info}
+            >
+                <Text style={[styles.title, {
+                    color: colors.primaryTextColor,
+                    textDecorationLine: (item.status == TaskStatus.COMPLETED) ? "line-through" : 'none'
+                }]}
+                >
+                    {item.title}
+                </Text>
                 {(item.fromTime || item.toTime) && (
                     <Text style={[styles.time, { color: colors.primaryTextColor }]}>
                         {item.fromTime} - {item.toTime}
                     </Text>
                 )}
-            </View>
+            </TouchableOpacity>
             <View style={styles.actions}>
-
-                <AntDesign
-                    name="right"
-                    size={18}
-                    color={colors.primaryTextColor} />
+                <TouchableOpacity
+                    onPress={() => {
+                        handleTaskStatus(item._id, item.status)
+                    }}
+                >
+                    <AntDesign
+                        name={item.status === "NEW" ? 'checkcircleo' : 'checkcircle'}
+                        size={20}
+                        color={colors.primaryTextColor}
+                    />
+                </TouchableOpacity>
             </View>
-        </TouchableOpacity>
+        </View>
     );
-
     return (
         <>
             <View style={[styles.container, { backgroundColor: colors.primaryBgColor }]}>
@@ -79,17 +171,19 @@ const MemberList: React.FC = () => {
                             Today's Progress
                         </Text>
                         <View style={styles.cardCalendar}>
-                            <Text style={styles.cardHeaderDate}>20-01-2025</Text>
-                            <Text style={styles.cardHeaderDay}>Monday</Text>
+                            <Text style={styles.cardHeaderDate}>{todayDate}</Text>
+                            <Text style={styles.cardHeaderDay}>{todayDay}</Text>
                         </View>
                     </View>
                     <View style={styles.progressSection}>
                         <View style={styles.progressTitleContainer}>
                             <Text style={styles.progressTitle}>Progress</Text>
-                            <Text style={styles.progressPercent}>50%</Text>
+                            <Text style={styles.progressPercent}>{progress}</Text>
                         </View>
                         <View style={styles.progressBar}>
-                            <View style={styles.progressFill}></View>
+                            <View style={[styles.progressFill, {
+                                width: progress as ViewStyle["width"],
+                            }]}></View>
                         </View>
                     </View>
                 </LinearGradient>
@@ -99,13 +193,35 @@ const MemberList: React.FC = () => {
                     }]}>
                         Today Tasks
                     </Text>
-                    {/* <View style={styles.searchContainer}>
-                        <SearchInput setSearchInput={setSearchInput} />
-                    </View> */}
+                    {multipleSelected && (
+                        <View style={{
+                            flexDirection: 'row',
+                            alignItems: 'center'
+                        }}>
+                            <TouchableOpacity
+                                onPress={deselectAllTasks}
+                                style={{
+                                    marginRight: 10
+                                }}
+                            >
+                                <Text> Unselect All</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => setIsComfirm(true)}
+                            >
+                                <MaterialIcons
+                                    name="delete"
+                                    size={28}
+                                    color={colors.danger}
+                                />
+                            </TouchableOpacity>
+
+                        </View>
+                    )}
                 </View>
 
                 <FlatList
-                    data={searchInput ? filterTasks : tasks}
+                    data={tasks}
                     keyExtractor={(item) => item._id}
                     renderItem={renderItem}
                     contentContainerStyle={[styles.list]}
@@ -130,6 +246,17 @@ const MemberList: React.FC = () => {
                         color={colors.secondary}
                     />
                 </TouchableOpacity>
+                {isConfirm && (
+                    <ConfirmModal
+                        header='Delete Task'
+                        message='Are you sure, you want to delete'
+                        handleForm={deleteSelectedTasks}
+                        btnLabel='Delete'
+                        isLoading={isLoading}
+                        isOpen={isConfirm}
+                        setIsOpen={setIsComfirm}
+                    />
+                )}
             </View >
         </>
     );
@@ -200,7 +327,7 @@ const styles = StyleSheet.create({
         position: 'relative'
     },
     progressFill: {
-        width: '50%',
+
         height: 20,
         borderRadius: 10,
         backgroundColor: "#0074D9",
@@ -210,7 +337,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         width: '95%',
-        marginHorizontal: 'auto'
+        marginHorizontal: 'auto',
+        alignItems: 'center'
     },
     listHeaderText: {
         fontSize: 24,
@@ -268,4 +396,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default MemberList;
+export default TodoList;

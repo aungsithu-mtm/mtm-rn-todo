@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, Image, TouchableOpacity, StyleSheet, Switch } from "react-native";
+import { Text, View, TouchableOpacity, StyleSheet, Switch } from "react-native";
 import { MaterialIcons, FontAwesome5, AntDesign, Entypo } from "@expo/vector-icons";
 import { useThemeContext } from "@/context/ThemeContext";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { ConfirmModal } from "@/components/Modal";
-import { uploadImage } from "@/utils/cloudinary";
-import { EditUserForm, User } from "@/types";
-import { getUser, updateUser, deleteUser } from "@/hooks/useUser";
 import { getTask, deleteTasks } from "@/hooks/useTask";
 import { formatTimestamp } from "@/utils/dateHandler";
 
@@ -18,10 +15,8 @@ export default function Index() {
     const { task } = getTask(id as string);
     const { setTaskList } = deleteTasks();
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [isEnabled, setIsEnabled] = useState(false);
-    const toggleSwitch = () => setIsEnabled(previousState => !previousState);
 
-    
+
     const handleDelete = async (id: string | undefined) => {
         try {
             if (id) {
@@ -55,7 +50,7 @@ export default function Index() {
                     <Text style={[styles.dateText, {
                         color: colors.primaryTextColor
                     }]}>
-                       {formatTimestamp(task?.date)}
+                        {formatTimestamp(task?.date)}
                     </Text>
                 </View>
                 <View style={styles.infoContainer}>
@@ -87,11 +82,6 @@ export default function Index() {
                             flexDirection: 'row',
                             marginLeft: 20
                         }}>
-                            <AntDesign
-                                name="clockcircle"
-                                size={15}
-                                color={colors.primaryTextColor}
-                            />
                             <Text style={[styles.time, { color: colors.primaryTextColor }]}>
                                 {task?.toTime}
                             </Text>
@@ -112,20 +102,13 @@ export default function Index() {
                     }]}>
                         Active
                     </Text>
-                    <Switch
-                        trackColor={{ false: '#767577', true: '#81b0ff' }}
-                        thumbColor={isEnabled ? '#f5dd4b' : '#f4f3f4'}
-                        ios_backgroundColor="#3e3e3e"
-                        onValueChange={toggleSwitch}
-                        value={isEnabled}Aung Si Thu ( Office )
-                    />
                 </View>
                 <View style={styles.btnContainer}>
                     <TouchableOpacity
-                       onPress={() => {
+                        onPress={() => {
                             navigate.push({
                                 pathname: '/pages/edit',
-                                params: { id: id},
+                                params: { id: id },
                             })
                         }}
                         style={{ marginHorizontal: 15 }}
@@ -137,7 +120,7 @@ export default function Index() {
                         />
                     </TouchableOpacity>
                     <TouchableOpacity
-                         onPress={() => setIsComfirm(true)}
+                        onPress={() => setIsComfirm(true)}
                         style={{ marginHorizontal: 15 }}
                     >
                         <MaterialIcons
@@ -147,7 +130,7 @@ export default function Index() {
                         />
                     </TouchableOpacity>
                 </View>
-                 <ConfirmModal
+                <ConfirmModal
                     header='Delete Task'
                     message='Are you sure, you want to delete'
                     handleForm={() => handleDelete(id as string)}

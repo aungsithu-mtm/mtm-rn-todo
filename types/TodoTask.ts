@@ -9,6 +9,7 @@ export type Task = {
     imageUrl: string
     status: string
     isActive: boolean
+    checked?: boolean
 }
 
 export type AddTaskForm = {
@@ -31,4 +32,9 @@ export type EditTaskForm = {
     imageUrl?: string
     isActive?: boolean
     status?: string
+}
+
+export type UpdateTaskStatusForm = {
+    _id: string
+    status: string
 }
