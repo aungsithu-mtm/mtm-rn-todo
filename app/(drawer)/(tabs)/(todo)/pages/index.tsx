@@ -204,7 +204,7 @@ const TodoList: React.FC = () => {
                                     marginRight: 10
                                 }}
                             >
-                                <Text> Unselect All</Text>
+                                <Text style={{color: colors.primaryTextColor}}> Unselect All</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 onPress={() => setIsComfirm(true)}

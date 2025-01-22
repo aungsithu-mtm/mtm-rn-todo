@@ -22,28 +22,29 @@ const InitialLayout = () => {
     }
   }, [isSignedIn])
   return (
-
-    <Stack>
-      <Stack.Screen name="index" options={{ headerShown: false }} />
-      <Stack.Screen name="+not-found" />
-      <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
-      <Stack.Screen
-        name="auth/signin"
-        options={{ presentation: "modal", headerShown: false }}
-      />
-      <Stack.Screen
-        name="auth/signup"
-        options={{ presentation: "modal", headerShown: false }}
-      />
-      <Stack.Screen
-        name="auth/emailVerify/index"
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="auth/forgotPassword/index"
-        options={{ headerShown: false }}
-      />
-    </Stack>
+  
+      <Stack>
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="+not-found" />
+        <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
+        <Stack.Screen
+          name="auth/signin"
+          options={{ presentation: "modal", headerShown: false }}
+        />
+        <Stack.Screen
+          name="auth/signup"
+          options={{ presentation: "modal", headerShown: false }}
+        />
+        <Stack.Screen
+          name="auth/emailVerify/index"
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="auth/forgotPassword/index"
+          options={{ headerShown: false }}
+        />
+      </Stack>
+    
   );
 };
 
@@ -62,11 +63,9 @@ const RootLayoutNav = () => {
             style={{ flex: 1 }}
           >
             <AuthProvider>
-              <ThemeProvider>
-                {/* <ScrollView contentContainerStyle={{ flexGrow: 1 }}> */}
+            <ThemeProvider>
                   <InitialLayout />
-                {/* </ScrollView> */}
-              </ThemeProvider>
+                </ThemeProvider>
             </AuthProvider>
           </KeyboardAvoidingView>
           <Toast />
