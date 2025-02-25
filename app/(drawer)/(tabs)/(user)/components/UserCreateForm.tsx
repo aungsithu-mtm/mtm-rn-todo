@@ -10,7 +10,7 @@ import { Formik } from "formik";
 import validationAddUserSchema from "../validation/validationAddUserSchema";
 import { AddUserForm } from "@/types";
 import * as ImagePicker from "expo-image-picker";
-import { CustomTextInput, MICON } from "@/components/Form";
+import { CustomTextInput } from "@/components/Form";
 import { ExecuteButton } from "@/components/Button";
 import { useThemeContext } from "@/context/ThemeContext";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -110,7 +110,7 @@ const UserCreateForm: React.FC<Props> = ({
                                         value={values.username || ""}
                                         name="username"
                                         color={colors.primaryTextColor}
-                                        icon={MICON.USERNAME}
+                                        icon="person"
                                     />
                                 </View>
                                 {/* Email Field*/}
@@ -125,8 +125,8 @@ const UserCreateForm: React.FC<Props> = ({
                                         value={values.email || ""}
                                         name="email"
                                         color={colors.primaryTextColor}
-                                        type="email"
-                                        icon={MICON.EMAIL}
+                                        type="email-address"
+                                        icon="email"
                                     />
                                 </View>
                                 {/* Password Field*/}
@@ -141,8 +141,8 @@ const UserCreateForm: React.FC<Props> = ({
                                         value={values.password || ""}
                                         name="password"
                                         color={colors.primaryTextColor}
-                                        type="password"
-                                        icon={MICON.PASSWORD}
+                                        isPassword = {true}
+                                        icon="password"
                                     />
                                 </View>
 

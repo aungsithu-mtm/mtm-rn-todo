@@ -7,7 +7,7 @@ import React, { Dispatch, SetStateAction, useState } from "react";
 import { Formik } from "formik";
 import validationAddUserSchema from "../validation/validationAddUserSchema";
 import { CODE } from "@/types";
-import { CustomTextInput, MICON } from "@/components/Form";
+import { CustomTextInput } from "@/components/Form";
 import { ExecuteButton } from "@/components/Button";
 import { useThemeContext } from "@/context/ThemeContext";
 import styles from "./styles";
@@ -61,9 +61,9 @@ const UserVerifyForm: React.FC<Props> = ({
                                         touched={touched.code}
                                         value={values.code}
                                         name="username"
-                                        type="number"
+                                        type={"numeric"}
                                         color={colors.primaryTextColor}
-                                        icon={MICON.CODE}
+                                        icon="vpn-key"
                                     />
                                 </View>
 

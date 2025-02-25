@@ -10,13 +10,11 @@ import { useIsFocused } from '@react-navigation/native';
 import { Task } from '@/types';
 import { TaskStatus } from '@/constants/task';
 import { updateTaskStatus, getTasksByDate, deleteTasks } from '@/hooks/useTask';
-import { timestampToDateString, getDayOfWeek, changeDate, formatDate } from '@/utils/dateHandler';
-import { date } from 'yup';
+import { timestampToDateString, getDayOfWeek } from '@/utils/dateHandler';
 
-const UpComingTask: React.FC = () => {
+const TodoList: React.FC = () => {
     const navigate = useRouter();
-    const [currentDate, setCurrentDate] = useState<Date>(new Date());
-    const todayDate = timestampToDateString(currentDate);
+    const todayDate = timestampToDateString(new Date());
     const todayDay = getDayOfWeek(new Date())
     const { colors } = useThemeContext();
     const isFocused = useIsFocused();
@@ -28,6 +26,8 @@ const UpComingTask: React.FC = () => {
     const { handleUpdateTask } = updateTaskStatus();
     const { handleDeleteTasks } = deleteTasks();
 
+    const [progress, setProgress] = useState<string>();
+
     const fetchData = async () => {
         const data = await refetchTask();
         if (data.data) {
@@ -35,20 +35,22 @@ const UpComingTask: React.FC = () => {
                 ...task,
                 checked: false,
             }));
-            setTasks(tasksWithChecked)
+            setTasks(tasksWithChecked);
+            const completeTask = data.data.tasksByDate.filter((task) => {
+                return task.status === TaskStatus.COMPLETED;
+            })
+            const percent = (completeTask.length / data.data.tasksByDate.length) * 100
+            if (percent) {
+                setProgress(`${Math.trunc(percent)}%`)
+            } else {
+                setProgress('0%')
+            }
         }
     };
 
     useEffect(() => {
         fetchData();
-        setMultipleSelected(false)
-    }, [currentDate, isFocused]);
-
-    const handleDateChange = (status: "add" | "substract") => {
-        const changedDate = changeDate(currentDate, 1, status);
-        fetchData();
-        setCurrentDate(changedDate);
-    };
+    }, [isFocused]);
 
     const handleTaskStatus = async (_id: string, status: string) => {
         try {
@@ -122,7 +124,7 @@ const UpComingTask: React.FC = () => {
             <TouchableOpacity
                 onPress={() =>
                     navigate.navigate({
-                        pathname: "/pages/[id]",
+                        pathname: "/[id]",
                         params: { id: item._id },
                     })
                 }
@@ -160,68 +162,64 @@ const UpComingTask: React.FC = () => {
     return (
         <>
             <View style={[styles.container, { backgroundColor: colors.primaryBgColor }]}>
+                <LinearGradient
+                    colors={["#BCE1EE", "#E5F700"]}
+                    style={styles.card}
+                >
+                    <View style={styles.cardHeader}>
+                        <Text style={styles.cardHeaderTitle}>
+                            Today's Progress
+                        </Text>
+                        <View style={styles.cardCalendar}>
+                            <Text style={styles.cardHeaderDate}>{todayDate}</Text>
+                            <Text style={styles.cardHeaderDay}>{todayDay}</Text>
+                        </View>
+                    </View>
+                    <View style={styles.progressSection}>
+                        <View style={styles.progressTitleContainer}>
+                            <Text style={styles.progressTitle}>Progress</Text>
+                            <Text style={styles.progressPercent}>{progress}</Text>
+                        </View>
+                        <View style={styles.progressBar}>
+                            <View style={[styles.progressFill, {
+                                width: progress as ViewStyle["width"],
+                            }]}></View>
+                        </View>
+                    </View>
+                </LinearGradient>
                 <View style={styles.listHeader}>
-                    <TouchableOpacity
-                        onPress={() => handleDateChange("substract")}
-                    >
-                        <AntDesign
-                            name="leftcircle"
-                            size={30}
-                            color={colors.secondary}
-                        />
-                    </TouchableOpacity>
-                    <View>
-                        <Text style={[styles.listHeaderText, {
-                            color: colors.primaryTextColor,
-                            textAlign: 'center'
-                        }]}>
-                            {formatDate(currentDate)}
-                        </Text>
-                        <Text style={[styles.subHeaderText, {
-                            color: colors.primaryTextColor,
-                            textAlign: 'center'
-                        }]}>
-                            {getDayOfWeek(currentDate)}
-                        </Text>
-                    </View>
+                    <Text style={[styles.listHeaderText, {
+                        color: colors.primaryTextColor
+                    }]}>
+                        Today Tasks
+                    </Text>
+                    {multipleSelected && (
+                        <View style={{
+                            flexDirection: 'row',
+                            alignItems: 'center'
+                        }}>
+                            <TouchableOpacity
+                                onPress={deselectAllTasks}
+                                style={{
+                                    marginRight: 10
+                                }}
+                            >
+                                <Text style={{color: colors.primaryTextColor}}> Unselect All</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                onPress={() => setIsComfirm(true)}
+                            >
+                                <MaterialIcons
+                                    name="delete"
+                                    size={28}
+                                    color={colors.danger}
+                                />
+                            </TouchableOpacity>
 
-                    <TouchableOpacity
-                        onPress={() => handleDateChange("add")}
-                    >
-                        <AntDesign
-                            name="rightcircle"
-                            size={30}
-                            color={colors.secondary}
-                        />
-                    </TouchableOpacity>
+                        </View>
+                    )}
                 </View>
-                {multipleSelected && (
-                    <View style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'flex-end',
-                        margin: 20
-                    }}>
-                        <TouchableOpacity
-                            onPress={deselectAllTasks}
-                            style={{
-                                marginRight: 10
-                            }}
-                        >
-                               <Text style={{color: colors.primaryTextColor}}> Unselect All</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            onPress={() => setIsComfirm(true)}
-                        >
-                            <MaterialIcons
-                                name="delete"
-                                size={28}
-                                color={colors.danger}
-                            />
-                        </TouchableOpacity>
 
-                    </View>
-                )}
                 <FlatList
                     data={tasks}
                     keyExtractor={(item) => item._id}
@@ -237,7 +235,7 @@ const UpComingTask: React.FC = () => {
                 <TouchableOpacity
                     onPress={() => {
                         navigate.push({
-                            pathname: '/pages/create',
+                            pathname: '/create',
                         })
                     }}
                     style={[styles.addBtn, { backgroundColor: colors.primaryBgColor }]}
@@ -268,22 +266,84 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         position: 'relative',
-        paddingVertical: 30
+    },
+    //Card Styles
+    card: {
+        borderRadius: 12,
+        padding: 20,
+        margin: 20,
+        shadowColor: "#000",
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 5,
+    },
+    cardHeader: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginBottom: 20,
+    },
+    cardHeaderTitle: {
+        fontSize: 18,
+        fontWeight: "bold",
+        color: "#05445E",
+    },
+    cardCalendar: {
+        width: 100
+    },
+    cardHeaderDate: {
+        fontSize: 14,
+        fontWeight: "bold",
+        color: "#05445E",
+        textAlign: 'right'
+    },
+    cardHeaderDay: {
+        fontSize: 12,
+        color: "#05445E",
+        opacity: 0.8,
+        textAlign: 'right'
+    },
+    progressSection: {
+
+    },
+    progressTitleContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between'
+    },
+    progressTitle: {
+        color: "#05445E",
+        fontSize: 13
+    },
+    progressPercent: {
+        color: "#05445E",
+        fontSize: 13
+    },
+
+    progressBar: {
+        width: '100%',
+        height: 20,
+        backgroundColor: "#D1F1FF",
+        marginTop: 5,
+        borderRadius: 10,
+        position: 'relative'
+    },
+    progressFill: {
+
+        height: 20,
+        borderRadius: 10,
+        backgroundColor: "#0074D9",
     },
     //Card Styles
     listHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        width: '70%',
+        width: '95%',
         marginHorizontal: 'auto',
         alignItems: 'center'
     },
     listHeaderText: {
-        fontSize: 20,
+        fontSize: 24,
         fontWeight: 'bold',
-    },
-    subHeaderText: {
-        fontSize: 14
+        marginVertical: 5
     },
     list: {
         width: "98%",
@@ -336,4 +396,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default UpComingTask;
+export default TodoList;

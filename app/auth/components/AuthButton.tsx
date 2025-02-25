@@ -47,7 +47,7 @@ export default function AuthButton({ mode, handleSubmit, loading, color, type }:
                     <ActivityIndicator color={colors.light} />
                 ) : (
                     <Text style={{ textAlign: "center", color: colors.light, fontWeight: 600 }}>
-                        Verify Code
+                        {buttonText}
                     </Text>
                 )}
             </TouchableOpacity>

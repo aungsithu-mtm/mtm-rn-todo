@@ -108,6 +108,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     })();
   }, [token]);
 
+  const onValidate = async (email: string) => {
+    
+  }
+
   const onLogin = async (data: Omit<AuthType, "username">) => {
     const input = {
       email: data.email,
@@ -193,6 +197,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       /* If verification was completed, set the session to active
        * and redirect the user
        */
+      console.log("SignUpAttempt", signUpAttempt);
       if (signUpAttempt.status === "complete") {
         // graphQL for MongoDB
         const result = await register({
@@ -209,6 +214,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         console.warn(JSON.stringify(signUpAttempt, null, 2));
       }
     } catch (err) {
+      console.log("Error", err);
       const error = err as ClerkAPIErrorJSON;
       ShowToast("Error", errorHandler(error)!, "error");
     }
@@ -326,7 +332,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (response.data) {
         ShowToast("Success", response.data.deleteUser.message, "success");
       }
-      await onLogout();
+     await onLogout();
     } catch (err) {
       const error = err as ClerkAPIErrorJSON | ApolloError;
       ShowToast("Error", errorHandler(error), "error");
@@ -342,9 +348,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       setToken(undefined);
       await signOut();
-      await deleteAsyncStorage("token");
       await client.resetStore();
-      navigation.replace("/");
+      await deleteAsyncStorage("token");
+      navigation.replace("/auth/signin");
     } catch (err) {
       const error = err as ClerkAPIErrorJSON | ApolloError;
       ShowToast("Error", errorHandler(error), "error");

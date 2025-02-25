@@ -10,7 +10,7 @@ import { Formik } from "formik";
 import validationEditProfileSchema from "../validation/editProfileSchema";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { CustomTextInput, MICON } from "@/components/Form";
+import { CustomTextInput } from "@/components/Form";
 import { ExecuteButton } from "@/components/Button";
 import { useThemeContext } from "@/context/ThemeContext";
 import { User } from "@/types";
@@ -68,7 +68,7 @@ const ProfileEditForm: React.FC<Props> = ({
                                     value={values.username}
                                     name="username"
                                     color={colors.primaryTextColor}
-                                    icon={MICON.USERNAME}
+                                    icon="person"
                                     editable={false}
                                 />
                             </View>
@@ -84,8 +84,8 @@ const ProfileEditForm: React.FC<Props> = ({
                                     value={values.email}
                                     name="email"
                                     color={colors.primaryTextColor}
-                                    type="email"
-                                    icon={MICON.EMAIL}
+                                    type={"email-address"}
+                                    icon="email"
                                     editable={false}
                                 />
                             </View>
@@ -101,7 +101,7 @@ const ProfileEditForm: React.FC<Props> = ({
                                     value={values.firstName || ''}
                                     name="firstName"
                                     color={colors.primaryTextColor}
-                                    icon={MICON.FIRSTNAME}
+                                    icon="person"
                                 />
                             </View>
                             {/* Last Name Field */}
@@ -116,7 +116,7 @@ const ProfileEditForm: React.FC<Props> = ({
                                     value={values.lastName || ''}
                                     name="lastName"
                                     color={colors.primaryTextColor}
-                                    icon={MICON.FIRSTNAME}
+                                    icon="person"
                                 />
                             </View>
                             {/* Phone Field */}
@@ -130,8 +130,9 @@ const ProfileEditForm: React.FC<Props> = ({
                                     touched={touched.phone}
                                     value={values.phone || ''}
                                     name="phone"
+                                    type="numeric"
                                     color={colors.primaryTextColor}
-                                    icon={MICON.PHONE}
+                                    icon="phone"
                                 />
                             </View>
                             {/* Address Field */}
@@ -146,7 +147,7 @@ const ProfileEditForm: React.FC<Props> = ({
                                     value={values.address || ''}
                                     name="address"
                                     color={colors.primaryTextColor}
-                                    icon={MICON.ADDRESS}
+                                    icon="home"
                                 />
                             </View>
                             {/* Buttons */}

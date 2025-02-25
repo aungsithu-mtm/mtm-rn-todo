@@ -126,7 +126,7 @@ const CustomDrawerContent: React.FC<CustomDrawerContentProps> = (props) => {
           renderDrawerItem(
             "list",
             "Todo",
-            "/(drawer)/(tabs)/(todo)/pages",
+            "/(drawer)/(tabs)/(todo)",
             MaterialIcons
           )
         }
@@ -176,10 +176,6 @@ const Layout: React.FC = () => {
       <Drawer.Screen
         name="(setting)"
         options={({ navigation }) => screenOptions(navigation, "Setting")}
-      />
-      <Drawer.Screen
-        name="(tabs)/(user)/pages/[id]"
-        options={{ headerShown: false }}
       />
     </Drawer>
   );

@@ -8,8 +8,7 @@ import {
 } from "react-native";
 import { useThemeContext } from "@/context/ThemeContext";
 import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";
-import { MaterialIcons } from "@expo/vector-icons";
-import { timestampToDateString } from "@/utils/dateHandler";
+import { MaterialIcons } from "@expo/vector-icons"; 
 
 type Props = {
     handleChange: (text: string) => void;
@@ -63,10 +62,6 @@ export function DateTimeInput({
         }
     };
 
-    const showPicker = () => {
-        setShow(true);
-    };
-
     return (
         <View>
             {label && (
@@ -81,7 +76,7 @@ export function DateTimeInput({
                     </Text>
                 </View>
             )}
-            <TouchableOpacity style={[styles.textInputContainer]} onPress={showPicker}>
+            <TouchableOpacity style={[styles.textInputContainer]} onPress={() => setShow(true)}>
                 <TextInput
                     style={[
                         styles.textInput,

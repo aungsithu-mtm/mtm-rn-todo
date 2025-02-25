@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useThemeContext } from '@/context/ThemeContext';
 import { useLocalSearchParams, useRouter } from "expo-router";
-import TaskForm from '../components/TaskForm';
+import TaskForm from './components/TaskForm';
 import { EditTaskForm } from '@/types';
 import { updateTask, getTask } from '@/hooks/useTask';
 import { timestampToDateString } from '@/utils/dateHandler';

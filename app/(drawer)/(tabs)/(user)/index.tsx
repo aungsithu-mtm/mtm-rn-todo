@@ -4,7 +4,7 @@ import { useThemeContext } from '@/context/ThemeContext';
 import { AntDesign } from '@expo/vector-icons';
 import { FormModal } from '@/components/Modal'
 import { SearchInput } from '@/components/Form'
-import UserCreateForm from '../components/UserCreateForm';
+import UserCreateForm from './components/UserCreateForm';
 import { useRouter } from "expo-router";
 import { AddUserForm, User } from '@/types';
 import { createUser, getUsers } from '@/hooks/useUser';
@@ -86,7 +86,7 @@ const MemberList: React.FC = () => {
         <TouchableOpacity
             onPress={() =>
                 navigate.navigate({
-                    pathname: "/pages/[id]",
+                    pathname: "/[id]",
                     params: { id: item._id },
                 })
             }

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useThemeContext } from '@/context/ThemeContext';
 import { useRouter } from "expo-router";
-import TaskForm from '../components/TaskForm'
+import TaskForm from './components/TaskForm'
 import { AddTaskForm } from '@/types';
 import { createTask } from '@/hooks/useTask';
 
@@ -26,7 +26,7 @@ const Create: React.FC = () => {
         await handleCreateTask(data);
         setIsLoading(false);
         navigate.navigate({
-            pathname: "/pages",
+            pathname: "/",
         })
     };
 

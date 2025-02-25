@@ -6,13 +6,14 @@ import { useThemeContext } from "@/context/ThemeContext";
 type Props = {
   title: string
 }
-const { colors } = useThemeContext();
+
 
 const Divider: React.FC<Props> = ({ title }) => {
+  const { colors } = useThemeContext();
   return (
     <View style={style.container}>
-      <View style={[style.line]}></View>
-      <Text style={style.dividerTxt}>{title}</Text>
+      <View style={[style.line, {borderBottomColor : colors.gray}]}></View>
+      <Text style={[style.dividerTxt, {color: colors.gray}]}>{title}</Text>
       <View style={style.line}></View>
     </View>
   )
@@ -29,13 +30,11 @@ const style = StyleSheet.create({
     overflow: 'hidden'
   },
   line: {
-    borderBottomColor: colors.gray,
     borderBottomWidth: 1,
     marginHorizontal: 10,
     width: '55%'
   },
   dividerTxt: {
-    color: colors.gray,
     textAlign: 'center',
     marginVertical: 10,
     fontSize: 13

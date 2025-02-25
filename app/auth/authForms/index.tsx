@@ -50,8 +50,6 @@ const AuthFrom: React.FC<Props> = ({ mode, loading = false, handleForm }) => {
                         ? (<MaterialIcons name="arrow-back-ios-new" size={24} color="#1A2130" />)
                         : (<MaterialIcons name="arrow-back" size={24} color="#1A2130" />)}
                 </TouchableOpacity>
-                <Toast />
-                <FlashMessage position="center" />
                 <AuthHeader mode={mode} />
             </View>
             <View style={{ flex: 1 }}>
@@ -105,7 +103,7 @@ const AuthFrom: React.FC<Props> = ({ mode, loading = false, handleForm }) => {
                                             touched={touched.email}
                                             name='email'
                                             value={values.email ? values.email : ''}
-                                            type='email'
+                                            type='email-address'
                                         />
 
                                     </View>
@@ -119,9 +117,16 @@ const AuthFrom: React.FC<Props> = ({ mode, loading = false, handleForm }) => {
                                             touched={touched.password}
                                             name='password'
                                             value={values.password ? values.password : ''}
-                                            type='password'
+                                            isPassword={true}
                                         />
                                     </View>
+                                    {mode == ModalType.Signin && (
+                                        <View style={{ marginTop: 5 }}>
+                                            <Link href={"/auth/forgotPassword"} replace style={style.fpwdContainer}>
+                                                <Text style={{ fontSize: 14, color: colors.danger }}>Forgot password?</Text>
+                                            </Link>
+                                        </View>
+                                    )}
                                     <TouchableOpacity
                                         style={[style.btnFill, { backgroundColor: colors.dark }]}
                                         onPress={() => handleSubmit()}
@@ -135,13 +140,7 @@ const AuthFrom: React.FC<Props> = ({ mode, loading = false, handleForm }) => {
                                             </Text>
                                         )}
                                     </TouchableOpacity>
-                                    {mode == ModalType.Signin && (
-                                        <View>
-                                            <Link href={"/auth/forgotPassword"} replace style={style.fpwdContainer}>
-                                                <Text style={{ fontSize: 14, color: colors.danger }}>Forgot password?</Text>
-                                            </Link>
-                                        </View>
-                                    )}
+                                  
                                 </>
                             )}
 

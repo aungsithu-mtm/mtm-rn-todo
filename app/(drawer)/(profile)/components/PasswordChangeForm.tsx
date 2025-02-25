@@ -63,7 +63,7 @@ const SettingForm: React.FC<Props> = ({ handleForm, loading, error, setIsOpen })
                                     errors={errors.currentPassword}
                                     touched={touched.currentPassword}
                                     name="currentPassword"
-                                    type="password"
+                                    isPassword={true}
                                     value={values.currentPassword || ""}
                                     label="Current Password"
                                 />
@@ -77,7 +77,7 @@ const SettingForm: React.FC<Props> = ({ handleForm, loading, error, setIsOpen })
                                     errors={errors.newPassword}
                                     touched={touched.newPassword}
                                     name="newPassword"
-                                    type="password"
+                                    isPassword={true}
                                     value={values.newPassword || ""}
                                     label="New Password"
                                 />
@@ -91,7 +91,7 @@ const SettingForm: React.FC<Props> = ({ handleForm, loading, error, setIsOpen })
                                     errors={errors.confirmPassword}
                                     touched={touched.confirmPassword}
                                     name="confirmPassword"
-                                    type="password"
+                                    isPassword={true}
                                     value={values.confirmPassword || ""}
                                     label="Confirm Password"
                                 />

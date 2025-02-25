@@ -40,7 +40,7 @@ export default function Index() {
             setIsLoading(false)
             setIsComfirm(false);
             navigate.navigate({
-                pathname: "/pages"
+                pathname: "/"
             })
 
         } catch (err) {
@@ -113,7 +113,7 @@ export default function Index() {
                     <TouchableOpacity
                         onPress={() => {
                             navigate.push({
-                                pathname: '/pages/edit',
+                                pathname: '/edit',
                                 params: { id: id },
                             })
                         }}

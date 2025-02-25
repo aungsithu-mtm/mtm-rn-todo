@@ -4,7 +4,7 @@ import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 import { useThemeContext } from "@/context/ThemeContext";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { FormModal, ConfirmModal } from "@/components/Modal";
-import UserEditForm from "../components/UserEditForm";
+import UserEditForm from "./components/UserEditForm";
 import { uploadImage } from "@/utils/cloudinary";
 import { EditUserForm, User } from "@/types";
 import { getUser, updateUser, deleteUser } from "@/hooks/useUser";

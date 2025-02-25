@@ -1,6 +1,5 @@
 import {
     View,
-    Text,
     TouchableOpacity,
     Platform,
     StyleSheet,
@@ -8,7 +7,7 @@ import {
     Image,
     ScrollView
 } from 'react-native';
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useRouter } from 'expo-router'
 import { MaterialIcons } from '@expo/vector-icons';
 import { Formik } from "formik";
@@ -18,7 +17,6 @@ import validationForgotSchema from './validationSchema';
 import { ForgetFormValues } from "@/types";
 import Toast from "react-native-toast-message";
 import FlashMessage from "react-native-flash-message";
-import { AuthType } from "@/types/Auth"
 import { CustomTextInput } from "@/components/Form"
 import { useThemeContext } from "@/context/ThemeContext";
 import { useAuthContext } from '@/context/AuthContext';
@@ -26,12 +24,11 @@ import AuthHeader from '../components/AuthHeader';
 import AuthButton from '../components/AuthButton';
 type Props = {
     mode: ModalType;
-    handleForm: (data: AuthType) => void
 }
 
 const { width, height } = Dimensions.get("window"); // Get device width
 
-const ForgotPassword: React.FC<Props> = ({ mode, handleForm }) => {
+const ForgotPassword: React.FC<Props> = ({ mode }) => {
     mode = ModalType.forgotPassword
     const { colors } = useThemeContext();
     const { onForgotPassword, onResetPassword } = useAuthContext();
@@ -102,7 +99,7 @@ const ForgotPassword: React.FC<Props> = ({ mode, handleForm }) => {
                                     <View>
                                         <CustomTextInput
                                             color={colors.dark}
-                                            type='email'
+                                            type={'email-address'}
                                             placeholder="Email Address"
                                             handleChange={handleChange("email")}
                                             handleBlur={handleBlur("email")}
@@ -119,7 +116,7 @@ const ForgotPassword: React.FC<Props> = ({ mode, handleForm }) => {
                                         <View style={style.inputContainer}>
                                             <CustomTextInput
                                                 color={colors.dark}
-                                                type='password'
+                                                isPassword={true}
                                                 placeholder="********"
                                                 handleChange={handleChange("password")}
                                                 handleBlur={handleBlur("password")}
@@ -132,7 +129,7 @@ const ForgotPassword: React.FC<Props> = ({ mode, handleForm }) => {
                                         <View>
                                             <CustomTextInput
                                                 color={colors.dark}
-                                                type='number'
+                                                type={"numeric"}
                                                 placeholder="Verification Code"
                                                 handleChange={handleChange("code")}
                                                 handleBlur={handleBlur("code")}

@@ -21,6 +21,16 @@ export const ThemeContext = createContext<ThemeContextType>({
   setTheme: () => {},
 });
 
+
+export const useThemeContext = () => {
+  const context = useContext(ThemeContext);
+  if (!context) {
+    throw new Error("useThemeContext must be used within ThemeProvider");
+  }
+  return context;
+};
+
+
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setThemeState] = useState<Theme>({ mode: "automatic" });
   const [colors, setColors] = useState(Colors.light);
@@ -76,12 +86,4 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       {children}
     </ThemeContext.Provider>
   );
-};
-
-export const useThemeContext = () => {
-  const context = useContext(ThemeContext);
-  if (!context) {
-    throw new Error("useThemeContext must be used within ThemeProvider");
-  }
-  return context;
 };

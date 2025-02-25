@@ -6,7 +6,7 @@ import React, { Dispatch, SetStateAction, useState } from "react";
 import { Formik } from "formik";
 import validationAddTaskSchema from "../validation/validationAddTaskSchema";
 import { AddTaskForm, EditTaskForm } from "@/types";
-import { CustomTextInput, MICON, DateTimeInput } from "@/components/Form";
+import { CustomTextInput, DateTimeInput } from "@/components/Form";
 import { ExecuteButton } from "@/components/Button";
 import { useThemeContext } from "@/context/ThemeContext";
 import styles from "./styles";

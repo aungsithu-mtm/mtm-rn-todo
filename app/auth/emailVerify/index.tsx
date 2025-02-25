@@ -92,7 +92,7 @@ const EmailVerify: React.FC<Props> = ({ mode, handleForm }) => {
                                 <View>
                                     <CustomTextInput
                                         color={colors.dark}
-                                        type='number'
+                                        type={"numeric"}
                                         placeholder="Verification Code"
                                         handleChange={handleChange("code")}
                                         handleBlur={handleBlur("code")}

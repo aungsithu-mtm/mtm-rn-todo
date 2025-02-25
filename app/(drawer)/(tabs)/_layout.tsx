@@ -21,16 +21,16 @@ const _layout = () => {
     };
 
     const currentRouteName = getNestedRouteName(navigationState);
-    const hideTabBarScreens = ['pages/[id]', 'pages/create', 'pages/edit'];
+    const hideTabBarScreens = ['[id]', 'create', 'edit'];
     const isSpecificScreens = hideTabBarScreens.includes(currentRouteName ? currentRouteName : '');
 
     const getCustomTitle = (routeName: string | null): string | undefined => {
         switch (routeName) {
-            case 'pages/[id]':
+            case '[id]':
                 return "Detail";
-            case 'pages/create':
+            case 'create':
                 return "Create";
-            case 'pages/edit':
+            case 'edit':
                 return "Edit";
             default:
                 return undefined;

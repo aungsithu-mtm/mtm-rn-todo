@@ -3,16 +3,6 @@ import { TextInput, StyleSheet, TouchableOpacity, View, KeyboardTypeOptions, Tex
 import { useThemeContext } from "@/context/ThemeContext";
 import { MaterialIcons } from "@expo/vector-icons";
 
-export enum MICON {
-    PASSWORD = "lock",
-    EMAIL = "email",
-    USERNAME = "person",
-    FIRSTNAME = "person",
-    CODE = "vpn_key",
-    ADDRESS = "home",
-    PHONE = "phone"
-}
-
 
 type Props = {
     handleChange: (text: string) => void;
@@ -21,11 +11,12 @@ type Props = {
     touched?: boolean;
     value: string;
     name: string;
-    type?: "password" | "email" | "number";
-    icon?: MICON
+    type?: KeyboardTypeOptions | undefined;
+    icon?: keyof typeof MaterialIcons.glyphMap;
     [key: string]: any;
     label?: string
     editable?: boolean
+    isPassword?: boolean
 };
 
 export function CustomTextInput({
@@ -35,26 +26,15 @@ export function CustomTextInput({
     value,
     errors,
     touched,
-    type,
+    type = "default",
     icon,
     label,
+    isPassword = false,
     editable = true,
     ...props
 }: Props) {
     const { colors } = useThemeContext();
     const [isPasswordVisible, setPasswordVisible] = useState(false);
-
-    const isPassword = type === "password";
-    let keyBoardType: KeyboardTypeOptions;
-    switch (type) {
-        case "email": keyBoardType = "email-address"; break;
-        case "number": keyBoardType = "numeric"; break;
-        default: keyBoardType = "default"
-    }
-
-    const togglePasswordVisibility = () => {
-        setPasswordVisible((prev) => !prev);
-    };
 
     const inputHeight = props.numberOfLines && (props.numberOfLines * 25)
 
@@ -79,11 +59,10 @@ export function CustomTextInput({
                     ]}
                     secureTextEntry={isPassword && !isPasswordVisible}
                     placeholderTextColor={props.color ? props.color : colors.primaryTextColor}
-
                     autoCapitalize="none"
                     onChangeText={handleChange}
                     onBlur={handleBlur}
-                    keyboardType={keyBoardType}
+                    keyboardType={type}
                     value={value}
                     editable={editable}
                     {...props}
@@ -100,7 +79,7 @@ export function CustomTextInput({
                 {isPassword && (
                     <TouchableOpacity
                         style={styles.visible}
-                        onPress={togglePasswordVisibility}
+                        onPress={() => setPasswordVisible(!isPasswordVisible)}
                     >
                         <MaterialIcons
                             name={isPasswordVisible ? "visibility" : "visibility-off"}
