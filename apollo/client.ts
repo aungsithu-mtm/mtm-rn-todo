@@ -6,6 +6,7 @@ const httpLink = new HttpLink({
     uri: process.env.EXPO_PUBLIC_APOLLO_ENDPOINT,
 });
 
+
 const authLink = setContext(async (_, { headers }) => {
     try {
         const token = await AsyncStorage.getItem("token");

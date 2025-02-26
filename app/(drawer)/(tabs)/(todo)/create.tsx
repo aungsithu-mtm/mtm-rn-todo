@@ -23,6 +23,7 @@ const Create: React.FC = () => {
 
     const handleForm = async (data: AddTaskForm) => {
         setIsLoading(true);
+        console.log("HELLO")
         await handleCreateTask(data);
         setIsLoading(false);
         navigate.navigate({

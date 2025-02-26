@@ -170,7 +170,6 @@ const AuthFrom: React.FC<Props> = ({ mode, loading = false, handleForm }) => {
 
 export default AuthFrom
 
-const backgroundImageHeight = 550;
 
 const style = StyleSheet.create({
     container: {
@@ -179,10 +178,10 @@ const style = StyleSheet.create({
     backgroundImage: {
         position: "absolute",
         width: width,
-        height: backgroundImageHeight,
+        height: 700,
     },
     formContainer: {
-        marginTop: (height - backgroundImageHeight) - 100,
+        marginTop: 100 ,
         paddingTop: 5,
     },
     inputContainer: {

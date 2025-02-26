@@ -158,10 +158,7 @@ const ForgotPassword: React.FC<Props> = ({ mode }) => {
     )
 }
 
-export default ForgotPassword
-
-const backgroundImageHeight = 550;
-
+export default ForgotPassword;
 
 const style = StyleSheet.create({
     container: {
@@ -170,10 +167,10 @@ const style = StyleSheet.create({
     backgroundImage: {
         position: "absolute",
         width: width,
-        height: backgroundImageHeight,
+        height: 700,
     },
     formContainer: {
-        marginTop: (height - backgroundImageHeight) - 100,
+        marginTop: 100,
         paddingTop: 20,
     },
     inputContainer: {

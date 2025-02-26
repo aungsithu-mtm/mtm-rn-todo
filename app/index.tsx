@@ -82,11 +82,11 @@ const styles = StyleSheet.create({
     left: 0,
     top: 0,
     width: width,
-    height: 300,
+    height: 325,
   },
   background: {
     position: "relative",
-    height: 300,
+    height: 350,
   },
   logoImage: {
     width: 150,
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
   wpDescribe: {
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 20,
+    marginTop: 15,
   },
   describe: {
     fontSize: 14,

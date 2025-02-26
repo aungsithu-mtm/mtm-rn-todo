@@ -8,7 +8,7 @@ import {
     StyleSheet,
     ActivityIndicator
 } from "react-native";
-import { Feather, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
+import { Feather, MaterialIcons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { uploadImage } from "@/utils/cloudinary";
 import { useThemeContext } from "@/context/ThemeContext";

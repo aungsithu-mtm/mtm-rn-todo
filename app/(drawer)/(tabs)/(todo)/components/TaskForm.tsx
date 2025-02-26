@@ -2,7 +2,7 @@ import {
     View,
     ScrollView,
 } from "react-native";
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React from "react";
 import { Formik } from "formik";
 import validationAddTaskSchema from "../validation/validationAddTaskSchema";
 import { AddTaskForm, EditTaskForm } from "@/types";
@@ -122,7 +122,7 @@ const TaskForm: React.FC<Props> = ({
                             {/* Buttons */}
                             <ExecuteButton
                                 loading={loading}
-                                handleSubmit={handleSubmit}
+                                handleSubmit={  handleSubmit}
                                 style={{ backgroundColor: colors.primaryTextColor }}
                                 btnLabel={mode === 'edit' ? 'Edit' : "Create"}
                                 labelStyle={[styles.btnText, { color: colors.primaryBgColor }]}

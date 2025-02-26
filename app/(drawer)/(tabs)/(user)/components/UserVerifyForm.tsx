@@ -3,7 +3,7 @@ import {
     Text,
     ScrollView,
 } from "react-native";
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import { Formik } from "formik";
 import validationAddUserSchema from "../validation/validationAddUserSchema";
 import { CODE } from "@/types";

@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, Alert, ViewStyle } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { useThemeContext } from '@/context/ThemeContext';
 import { AntDesign, MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from "expo-router";
-import { LinearGradient } from "expo-linear-gradient";
 import Checkbox from "expo-checkbox";
 import { ConfirmModal } from "@/components/Modal";
 import { useIsFocused } from '@react-navigation/native';
@@ -11,7 +10,6 @@ import { Task } from '@/types';
 import { TaskStatus } from '@/constants/task';
 import { updateTaskStatus, getTasksByDate, deleteTasks } from '@/hooks/useTask';
 import { timestampToDateString, getDayOfWeek, changeDate, formatDate } from '@/utils/dateHandler';
-import { date } from 'yup';
 
 const UpComingTask: React.FC = () => {
     const navigate = useRouter();

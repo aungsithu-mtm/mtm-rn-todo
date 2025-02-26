@@ -14,7 +14,6 @@ import { AddTaskForm, EditTaskForm, Task, UpdateTaskStatusForm } from "@/types";
 import { errorHandler } from "@/utils/errorHandler";
 import ShowToast from "@/utils/toast";
 import { ApolloError } from "@apollo/client";
-import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 
 const getTasks = () => {
@@ -118,7 +117,6 @@ const createTask = () => {
 const updateTask = () => {
     const [isSuccess, setIsSuccess] = useState<boolean>(false);
     const [taskMutation] = useTaskUpdateMutation();
-    const navigate = useRouter();
 
     const handleUpdateTask = async (task: EditTaskForm) => {
         try {
@@ -152,13 +150,10 @@ const updateTask = () => {
 };
 
 const updateTaskStatus = () => {
-    const [task, setTask] = useState<UpdateTaskStatusForm | undefined>();
     const [isSuccess, setIsSuccess] = useState<boolean>(false);
     const [taskMutation] = useUpdateTasksStatusMutation();
-    const navigate = useRouter();
 
     const handleUpdateTask = async (newTask: UpdateTaskStatusForm) => {
-        setTask(newTask);
         try {
             const result = await taskMutation({
                 variables: {
@@ -167,7 +162,6 @@ const updateTaskStatus = () => {
             });
             if (result.data?.updateTasksStatus) {
                 setIsSuccess(true);
-                setTask(undefined); // Reset task state
                 ShowToast("Success", result.data.updateTasksStatus.message, "success");
             }
         } catch (error) {
@@ -180,13 +174,11 @@ const updateTaskStatus = () => {
 }
 
 const deleteTasks = () => {
-    const [taskList, setTaskList] = useState<string[]>([]);
     const [isSuccess, setIsSuccess] = useState<boolean>(false);
     const [taskMutation] = useDeleteTasksMutation();
 
     const handleDeleteTasks = async (tasksToDelete: string[]) => {
         try {
-            setTaskList(tasksToDelete); // Update the task list state
             if (tasksToDelete.length === 0) return;
 
             const result = await taskMutation({
@@ -196,9 +188,9 @@ const deleteTasks = () => {
             });
 
             if (result.data?.deleteTasks) {
+                const message: string = tasksToDelete.length === 1 ? "Task has been deleted" : result.data.deleteTasks.message;
                 setIsSuccess(true);
-                setTaskList([]); // Clear the task list state
-                ShowToast("Success", result.data.deleteTasks.message, "success");
+                ShowToast("Success", message, "success");
             }
         } catch (error) {
             const err = error as ApolloError;

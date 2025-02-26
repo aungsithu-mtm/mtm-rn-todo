@@ -134,8 +134,6 @@ const EmailVerify: React.FC<Props> = ({ mode, handleForm }) => {
 
 export default EmailVerify
 
-const backgroundImageHeight = 550;
-
 const style = StyleSheet.create({
     container: {
         paddingHorizontal: 24,
@@ -143,10 +141,10 @@ const style = StyleSheet.create({
     backgroundImage: {
         position: "absolute",
         width: width,
-        height: backgroundImageHeight,
+        height: 700,
     },
     formContainer: {
-        marginTop: (height - backgroundImageHeight) - 100,
+        marginTop: 100,
         paddingTop: 5,
     },
     label: {

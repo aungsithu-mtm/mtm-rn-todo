@@ -8,7 +8,6 @@ import {
 } from "react-native";
 import { Formik } from "formik";
 import validationEditProfileSchema from "../validation/editProfileSchema";
-import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { CustomTextInput } from "@/components/Form";
 import { ExecuteButton } from "@/components/Button";

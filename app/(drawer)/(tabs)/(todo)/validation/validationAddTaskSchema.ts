@@ -16,10 +16,21 @@ const AddTaskSchema = Yup.object().shape({
         .required(isRequired("Date")),
     fromTime: Yup.string()
         .matches(/^([01]?\d|2[0-3]):[0-5]\d$/, "From Time must be in HH:mm format")
-        .nullable(),
+        .test("fromTime-required-with-toTime", isRequired("From Time"), function (value) {
+            const { toTime } = this.parent;
+            return !toTime || !!value;
+        }),
     toTime: Yup.string()
         .matches(/^([01]?\d|2[0-3]):[0-5]\d$/, "To Time must be in HH:mm format")
-        .nullable(),
+        .test("toTime-required-with-fromTime", isRequired("To Time"), function (value) {
+            const { fromTime } = this.parent;
+            return !fromTime || !!value;
+        })
+        .test("toTime-greater-than-fromTime", "To Time must be greater than From Time", function (value) {
+            const { fromTime } = this.parent;
+            if (!fromTime || !value) return true; // Skip validation if either field is empty
+            return fromTime < value; // Ensure fromTime is earlier than toTime
+        }),
 });
 
 export default AddTaskSchema;

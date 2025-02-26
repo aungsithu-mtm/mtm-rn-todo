@@ -39,12 +39,12 @@ export default function Index() {
             }
             setIsLoading(false)
             setIsComfirm(false);
-            navigate.navigate({
-                pathname: "/"
-            })
+            // navigate.back({
+            //     pathname: "/"
+            // })
+            navigate.back();
 
         } catch (err) {
-            console.error(err);
             setIsLoading(false);
         }
     };
