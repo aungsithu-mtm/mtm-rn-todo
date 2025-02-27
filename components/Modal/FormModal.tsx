@@ -1,4 +1,4 @@
-import { View, Text, Modal, TouchableOpacity, GestureResponderEvent, StyleSheet } from "react-native";
+import { View, Text, Modal, TouchableOpacity, GestureResponderEvent, StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
 import React, { Dispatch, ReactNode, SetStateAction } from "react";
 import { useThemeContext } from "@/context/ThemeContext";
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
@@ -33,11 +33,16 @@ export const FormModal: React.FC<FormModalProps> = ({
                     transparent={true}
                     animationType="slide"
                 >
+                    <KeyboardAvoidingView
+                        behavior={Platform.OS === "ios" ? "padding" : "height"}
+                        style={{ flex: 1 }}
+                    >
                     <TouchableOpacity onPress={handleOverlayPress} style={styles.content}>
                         <View onStartShouldSetResponder={handleModalPress} style={[styles.card, { backgroundColor: colors.barColor }]}>
                             {children}
                         </View>
                     </TouchableOpacity>
+                    </KeyboardAvoidingView>
                 </Modal>
             </SafeAreaView>
         </SafeAreaProvider>

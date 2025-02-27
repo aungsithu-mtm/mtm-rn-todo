@@ -1,10 +1,9 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import {
     View,
     Text,
     ScrollView,
-    KeyboardAvoidingView,
-    Platform,
+    Keyboard,
 } from "react-native";
 import { Formik } from "formik";
 import validationEditProfileSchema from "../validation/editProfileSchema";
@@ -32,12 +31,30 @@ const ProfileEditForm: React.FC<Props> = ({
     const { colors } = useThemeContext();
     const { top } = useSafeAreaInsets();
 
+    const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+    
+    useEffect(() => {
+      const keyboardDidShowListener = Keyboard.addListener(
+        "keyboardDidShow",
+        () => {
+          setKeyboardVisible(true);
+        }
+      );
+      const keyboardDidHideListener = Keyboard.addListener(
+        "keyboardDidHide",
+        () => {
+          setKeyboardVisible(false);
+        }
+      );
+  
+      return () => {
+        keyboardDidShowListener.remove();
+        keyboardDidHideListener.remove();
+      };
+    }, []);
+
     return (
-        <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-            style={{ flex: 1 }}
-        >
-            <ScrollView contentContainerStyle={{ paddingTop: top }}>
+            <ScrollView contentContainerStyle={{ paddingTop: top }}  style={{height: isKeyboardVisible ? 400 : 'auto'}}> 
                 <Text style={[styles.header, { color: colors.primaryTextColor }]}>
                     Edit Profile
                 </Text>
@@ -168,7 +185,6 @@ const ProfileEditForm: React.FC<Props> = ({
                     )}
                 </Formik>
             </ScrollView>
-        </KeyboardAvoidingView>
     );
 };
 

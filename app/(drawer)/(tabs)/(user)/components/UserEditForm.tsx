@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { 
     View, 
     Text, 
@@ -6,7 +6,9 @@ import {
     KeyboardAvoidingView, 
     Platform, 
     Image, 
-    TouchableOpacity 
+    TouchableOpacity, 
+    Dimensions,
+    Keyboard
 } from "react-native";
 import { Formik } from "formik";
 import validationEditUserSchema from "../validation/validationEditUserSchema";
@@ -56,13 +58,32 @@ const UserEditForm: React.FC<Props> = ({
             setImage(result.assets[0].base64!);
         }
     };
+    const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+    
+    useEffect(() => {
+      const keyboardDidShowListener = Keyboard.addListener(
+        "keyboardDidShow",
+        () => {
+          setKeyboardVisible(true);
+        }
+      );
+      const keyboardDidHideListener = Keyboard.addListener(
+        "keyboardDidHide",
+        () => {
+          setKeyboardVisible(false);
+        }
+      );
+  
+      return () => {
+        keyboardDidShowListener.remove();
+        keyboardDidHideListener.remove();
+      };
+    }, []);
 
     return (
-        <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-            style={{ flex: 1 }}
-        >
-            <ScrollView contentContainerStyle={{ paddingTop: top }}>
+        <View style={{ flex: 1 }}>
+            <ScrollView  style={{height: isKeyboardVisible ? 400 : 'auto'}}>
+                <View>
                 <Text style={[styles.header, { color: colors.primaryTextColor }]}>
                     Edit User
                 </Text>
@@ -217,8 +238,9 @@ const UserEditForm: React.FC<Props> = ({
                         </>
                     )}
                 </Formik>
+                </View>
             </ScrollView>
-        </KeyboardAvoidingView>
+        </View>
     );
 };
 

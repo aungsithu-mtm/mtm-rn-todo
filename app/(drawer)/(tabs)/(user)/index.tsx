@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { useThemeContext } from '@/context/ThemeContext';
 import { AntDesign } from '@expo/vector-icons';
 import { FormModal } from '@/components/Modal'
@@ -127,8 +127,9 @@ const MemberList: React.FC = () => {
                         }]}>No members available.</Text>
                     }
                 />
-
+           
                 <FormModal isOpen={isOpen} setIsOpen={setIsOpen}>
+
                     <UserCreateForm
                         handleForm={(data) => handleCreate(data)}
                         initialValue={initialValue}
@@ -137,6 +138,7 @@ const MemberList: React.FC = () => {
                         setProfileImage={setProfileImage}
                     />
                 </FormModal>
+              
                 <TouchableOpacity
                     onPress={() => setIsOpen(true)}
                     style={[styles.addBtn, { backgroundColor: colors.primaryBgColor }]}

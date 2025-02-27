@@ -4,7 +4,8 @@ import {
     StyleSheet,
     TouchableOpacity,
     View,
-    Text
+    Text,
+    Platform
 } from "react-native";
 import { useThemeContext } from "@/context/ThemeContext";
 import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";

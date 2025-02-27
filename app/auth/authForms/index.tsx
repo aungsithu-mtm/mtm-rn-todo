@@ -6,16 +6,15 @@ import {
     Platform,
     StyleSheet,
     Dimensions,
-    Image
+    Image,
+    KeyboardAvoidingView,
 } from 'react-native';
 import React, { useState } from 'react'
 import { Link, useRouter } from 'expo-router'
 import { MaterialIcons } from '@expo/vector-icons';
-import { ScrollView, TextInput } from 'react-native-gesture-handler';
+import { ScrollView } from 'react-native-gesture-handler';
 import { Formik } from "formik";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Toast from "react-native-toast-message";
-import FlashMessage from "react-native-flash-message";
 import { ModalType, SocialType } from '@/enums/common'
 import validationAuthSchema from "./validationSchema"
 import { AuthType } from "@/types/Auth"
@@ -43,6 +42,10 @@ const AuthFrom: React.FC<Props> = ({ mode, loading = false, handleForm }) => {
     })
     const { top } = useSafeAreaInsets();
     return (
+        <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+      >
         <View style={[{ flex: 1, paddingTop: top, backgroundColor: colors.primaryBgColor }]}>
             <View style={style.container}>
                 <TouchableOpacity onPress={() => navigate.back()} style={{ marginTop: 20 }}>
@@ -57,7 +60,8 @@ const AuthFrom: React.FC<Props> = ({ mode, loading = false, handleForm }) => {
                     source={require("../../../assets/images/bottomBg.png")}
                     style={style.backgroundImage}
                 />
-                <ScrollView style={[style.formContainer, style.container]}>
+               
+                <ScrollView style={[style.formContainer, style.container, {flexGrow: 1}]}>
                     <View style={style.socialGroup}>
                         <SocialBtn socialType={SocialType.Facebook} />
                         <SocialBtn socialType={SocialType.Google} />
@@ -160,11 +164,12 @@ const AuthFrom: React.FC<Props> = ({ mode, loading = false, handleForm }) => {
                                 </Text>
                             </Link>
                         </View>
-                    </View>
+                    </View>  
                 </ScrollView>
             </View>
 
         </View >
+        </KeyboardAvoidingView>
     )
 }
 
