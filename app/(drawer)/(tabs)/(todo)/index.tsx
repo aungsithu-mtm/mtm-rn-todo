@@ -145,6 +145,7 @@ const TodoList: React.FC = () => {
                 )}
             </TouchableOpacity>
             <View style={styles.actions}>
+            {!multipleSelected && (
                 <TouchableOpacity
                     onPress={() => {
                         handleTaskStatus(item._id, item.status)
@@ -156,6 +157,7 @@ const TodoList: React.FC = () => {
                         color={colors.primaryTextColor}
                     />
                 </TouchableOpacity>
+            )}
             </View>
         </View>
     );
