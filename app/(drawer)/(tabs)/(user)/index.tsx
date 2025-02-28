@@ -115,7 +115,7 @@ const MemberList: React.FC = () => {
     return (
         <>
             <View style={[styles.container, { backgroundColor: colors.primaryBgColor }]}>
-                <SearchInput setSearchInput={setSearchInput} />
+                <SearchInput setSearchInput={setSearchInput} inputValue={searchInput} />
                 <FlatList
                     data={searchInput ? filteredMembers : members}
                     keyExtractor={(item) => item._id}

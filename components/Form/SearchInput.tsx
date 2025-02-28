@@ -5,14 +5,13 @@ import { useThemeContext } from '@/context/ThemeContext';
 
 type Props = {
     setSearchInput: Dispatch<SetStateAction<string>>;
+    inputValue: string;
 };
 
-export const SearchInput: React.FC<Props> = ({ setSearchInput }) => {
+export const SearchInput: React.FC<Props> = ({ setSearchInput, inputValue }) => {
     const { colors } = useThemeContext();
-    const [inputValue, setInputValue] = useState<string>("");
 
     const handleClearInput = () => {
-        setInputValue("");
         setSearchInput("");
     };
 
@@ -35,7 +34,6 @@ export const SearchInput: React.FC<Props> = ({ setSearchInput }) => {
                 style={[styles.searchInput, { color: colors.primaryTextColor }]}
                 value={inputValue}
                 onChangeText={(text) => {
-                    setInputValue(text);
                     setSearchInput(text);
                 }}
             />

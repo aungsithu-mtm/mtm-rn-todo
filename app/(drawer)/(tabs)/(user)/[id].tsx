@@ -65,7 +65,7 @@ export default function Index() {
             setIsLoading(false)
             setIsComfirm(false);
             navigate.navigate({
-                pathname: "/pages"
+                pathname: "/(drawer)/(tabs)/(user)",
             })
 
         } catch (err) {

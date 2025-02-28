@@ -1,4 +1,4 @@
-import { View, Text, Modal, TouchableOpacity, GestureResponderEvent, StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
+import { View, Modal, TouchableOpacity, GestureResponderEvent, StyleSheet, KeyboardAvoidingView, Platform } from "react-native";
 import React, { Dispatch, ReactNode, SetStateAction } from "react";
 import { useThemeContext } from "@/context/ThemeContext";
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
@@ -15,9 +15,6 @@ export const FormModal: React.FC<FormModalProps> = ({
     setIsOpen,
 }) => {
     const { colors } = useThemeContext();
-    const handleOverlayPress = () => {
-        setIsOpen(false);
-    };
 
     const handleModalPress = (e: GestureResponderEvent): boolean => {
         e.stopPropagation();
@@ -37,7 +34,7 @@ export const FormModal: React.FC<FormModalProps> = ({
                         behavior={Platform.OS === "ios" ? "padding" : "height"}
                         style={{ flex: 1 }}
                     >
-                    <TouchableOpacity onPress={handleOverlayPress} style={styles.content}>
+                    <TouchableOpacity onPress={() => setIsOpen(false)} style={styles.content}>
                         <View onStartShouldSetResponder={handleModalPress} style={[styles.card, { backgroundColor: colors.barColor }]}>
                             {children}
                         </View>
