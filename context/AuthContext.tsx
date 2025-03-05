@@ -45,6 +45,7 @@ import apolloClient from "@/apollo/client";
 type Props = {
   onLogin?: (data: Omit<AuthType, "username">) => Promise<any>;
   onRegister?: (data: AuthType) => Promise<any>;
+  onSocialLogin?: (response: any) => Promise<any>;
   onVerify?: (code: string) => Promise<any>;
   onUpdateProvider?: (data: UserProviderInput) => Promise<any>;
   onLogout?: () => void;
@@ -101,16 +102,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     (e) => console.log(e.message)
   );
 
-
   useEffect(() => {
     (async () => {
       await userProfile();
     })();
   }, [token]);
-
-  const onValidate = async (email: string) => {
-    
-  }
 
   const onLogin = async (data: Omit<AuthType, "username">) => {
     const input = {
@@ -125,7 +121,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         identifier: data.email,
         password: data.password,
       });
-
 
       if (result.status === "complete") {
         // graphQL for mongoDB
@@ -147,9 +142,34 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const onSocialLogin = async (response: any) => {
+      try {
+            const { createdSessionId, signUp, signIn } = response;
+            if (createdSessionId && signUp) {
+                  const result = await register({
+                      variables: {
+                          input: {
+                              email: signUp.emailAddress!,
+                              username: `${signUp.firstName ?? ""} ${signUp.lastName ?? ""}`.trim(),
+                              password: "",
+                          },
+                      },
+              });
+                  if (result.data) {
+                      await setActiveSignUp?.({ session: createdSessionId });
+                      setTokenAsync(result.data.register.token);
+                  }
+              }
+              if(createdSessionId && signIn){
+                  setActive?.({ session: createdSessionId });
+              }
+          } catch (err) {
+              console.error("Error during social login:", err);
+          } 
+  }
+  
   const onRegister = async (data: AuthType) => {
     if (!isLoadedSignUp) return;
-
     try {
       // Clerk signUp
       await signUp.create({
@@ -190,16 +210,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const onVerify = async (code: string) => {
     try {
       if (!isLoadedSignUp) return;
-      // Use the code the user provided to attempt verification
       const signUpAttempt = await signUp.attemptEmailAddressVerification({
         code,
       });
-      /* If verification was completed, set the session to active
-       * and redirect the user
-       */
-      console.log("SignUpAttempt", signUpAttempt);
       if (signUpAttempt.status === "complete") {
-        // graphQL for MongoDB
         const result = await register({
           variables: {
             input: registerData!,
@@ -361,6 +375,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     onLogin,
     onLogout,
     onRegister,
+    onSocialLogin,
     onUpdateProvider,
     onVerify,
     onForgotPassword,

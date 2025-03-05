@@ -1,24 +1,18 @@
 import React from "react";
 import { Text, View, Image, TouchableOpacity, Dimensions } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { StyleSheet } from "react-native";
 import * as WebBrowser from "expo-web-browser";
 import { useRouter } from "expo-router";
 import { useThemeContext } from "@/context/ThemeContext";
 
-const { width, height } = Dimensions.get("window");
+const { width } = Dimensions.get("window");
 
 export default function Index() {
   const { colors } = useThemeContext();
-  const { top } = useSafeAreaInsets();
   const openLink = async () => {
     WebBrowser.openBrowserAsync("https://metateammyanmar.com/en/");
   };
   const navigate = useRouter();
-
-  const { width } = Dimensions.get("window"); // Get device width
-  const insets = useSafeAreaInsets(); // For safe area padding (e.g., status bar)
-
   return (
     <View style={[styles.container, { backgroundColor: colors.primaryBgColor }]}>
       <View style={styles.background}>
